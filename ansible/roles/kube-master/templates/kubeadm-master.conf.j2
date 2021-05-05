@@ -1,0 +1,65 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+apiServer:
+  timeoutForControlPlane: 8m0s
+  certSANs:
+{% for host in groups['kube-master'] | sort %}
+  - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+  - "{{ hostvars[host]['ansible_host'] }}"
+  - "{{ host }}"
+{% endfor %}
+  - 127.0.0.1
+  - localhost
+{% for san in master_sans | select() | sort | unique %}
+  - "{{ san }}"
+{% endfor %}
+clusterName: "{{ cluster_name }}"
+#controlPlaneEndpoint: "{{ full_lb_name }}:6443"
+controlPlaneEndpoint: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}"
+kind: ClusterConfiguration
+kubernetesVersion: "v{{ kubernetes_version }}"
+dns:
+  type: CoreDNS
+networking:
+  serviceSubnet: "{{ service_network_cidr }}"
+  podSubnet: "{{ pod_network_cidr }}"
+etcd:
+  local:
+    serverCertSANs:
+{% for host in groups['kube-master'] | sort %}
+    - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+{% endfor %}
+    peerCertSANs:
+{% for host in groups['kube-master'] | sort %}
+    - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+{% endfor %}
+---
+kind: InitConfiguration
+apiVersion: kubeadm.k8s.io/v1beta2
+certificateKey: "{{ CERT_KEY }}"
+localAPIEndpoint:
+  advertiseAddress: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+  bindPort: 6443
+nodeRegistration:
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  kubeletExtraArgs:
+    node-ip: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+    cloud-provider: "external"
+bootstrapTokens:
+- token: "{{ BOOTSTRAP_TOKEN }}"
+  description: "kubeadm bootstrap token"
+  ttl: "1h"
+  groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  usages:
+  - signing
+  - authentication
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+address: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+failSwapOn: false
+resolvConf: /etc/resolv.conf

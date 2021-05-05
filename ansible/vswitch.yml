@@ -1,0 +1,9 @@
+---
+- name: Setup vsiwtch
+  hosts: [dedicated]
+  gather_facts: true
+  tags:
+    - vswitch
+    - dedicated
+  roles:
+    - { role: vswitch }

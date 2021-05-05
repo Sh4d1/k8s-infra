@@ -1,0 +1,51 @@
+---
+- name: Cleanup and upgrade
+  apt:
+    autoclean: yes
+    autoremove: yes
+    cache_valid_time: 3600
+    update_cache: yes
+  environment: '{{ proxy_env | default ({}) }}'
+
+- name: Install common and needed tools
+  apt:
+    name:
+      - apt-transport-https
+      - curl
+      - iputils-ping
+      - software-properties-common
+      - vim
+      - xz-utils
+      - lsof
+      - tmux
+      - unzip
+      - ssl-cert
+      - rsync
+      - pwgen
+      - ldnsutils
+      - htop
+      - iotop
+      - ioping
+      - knot-dnsutils
+      - knot-host
+      - ethtool
+      - socat
+      - ipset
+      - ntp
+      - jq
+      - tar
+      - btrfs-progs
+      - libseccomp2
+      - util-linux
+    state: present
+  environment: '{{ proxy_env | default ({}) }}'
+
+- name: Add basic Python 3 libraries
+  apt:
+    name:
+      - python3-pip
+      - python3-requests
+      - python3-setuptools
+      - python3-yaml
+  when: ansible_python['version']['major'] == 3
+  environment: '{{ proxy_env | default ({}) }}'

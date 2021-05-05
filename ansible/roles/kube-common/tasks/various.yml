@@ -1,0 +1,26 @@
+---
+- name: Check if bpf is mounted
+  register: bpf
+  shell: "mount | grep bpf"
+  ignore_errors: yes
+  changed_when: "bpf.rc != 0"
+  check_mode: no
+
+- name: Create ebpf systemd mount service
+  copy:
+    src: sys-fs-bpf.mount
+    dest: /etc/systemd/system/sys-fs-bpf.mount
+  when: not "bpf" in bpf.stdout
+
+- name: Enable epbf
+  systemd:
+    enabled: yes
+    name: sys-fs-bpf.mount
+  when: not "bpf" in bpf.stdout
+
+- name: Start epbf
+  systemd:
+    enabled: yes
+    state: started
+    name: sys-fs-bpf.mount
+  when: not "bpf" in bpf.stdout

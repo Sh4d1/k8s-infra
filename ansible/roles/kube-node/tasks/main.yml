@@ -1,0 +1,149 @@
+---
+- name: Gather facts
+  setup:
+
+- name: Make sure /etc/kubernetes folder exists
+  file:
+    path: /etc/kubernetes/
+    state: directory
+    mode: '0755'
+  when:
+  - inventory_hostname not in groups['kube-master']
+
+- name: Make sure /etc/kubernetes/manifests folder exists
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    mode: '0755'
+  when:
+  - inventory_hostname not in groups['kube-master']
+
+- name: Check if kubelet is running
+  command: pgrep kubelet
+  register: kubelet_status
+  check_mode: no
+  failed_when: False
+  changed_when: False
+  when:
+  - inventory_hostname not in groups['kube-master']
+
+- name: Get Kubelet version is running
+  shell: "kubelet --version | cut -d ' ' -f2"
+  register: kubelet_version
+  check_mode: no
+  changed_when: False
+  when:
+  - inventory_hostname not in groups['kube-master']
+  - "kubelet_status.stdout != ''"
+
+- name: Generate join node token
+  command: > 
+    kubeadm token create
+    --ttl 15m
+  register: join_token
+  check_mode: no
+  when:
+  - inventory_hostname in groups['kube-master'][0]
+  - "'' in groups['kube-node'] | map('extract', hostvars, 'kubelet_status') | community.general.json_query('[*].stdout')"
+
+- name: Propagate join command
+  set_fact:
+    BOOTSTRAP_TOKEN: "{{ hostvars[groups['kube-master'][0]]['join_token']['stdout'] }}"
+  when:
+  - inventory_hostname not in groups['kube-master'][0]
+  - "'' in groups['kube-node'] | map('extract', hostvars, 'kubelet_status') | community.general.json_query('[*].stdout')"
+
+- name: Create /etc/kubernetes/kubeadm-join-node.conf
+  template:
+    src: kubeadm-join-node.conf.j2
+    dest: /etc/kubernetes/kubeadm-join-node.conf
+    force: yes
+  when:
+  - inventory_hostname not in groups['kube-master']
+  - kubelet_status.stdout == ""
+
+- name: Nodes join cluster
+  command: >
+    kubeadm join
+    --config /etc/kubernetes/kubeadm-join-node.conf
+    --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests,Swap
+  when:
+  - inventory_hostname not in groups['kube-master']
+  - kubelet_status.stdout == ""
+
+- name: Make sure /etc/kubernetes/kubeadm-join-node.conf is deleted
+  file:
+    path: /etc/kubernetes/kubeadm-join-node.conf
+    state: absent
+  when:
+  - inventory_hostname not in groups['kube-master']
+
+# ugly way (https://github.com/ansible/ansible/issues/12170)
+# may need to refacto
+- name: Upgrade nodes
+  include_role: 
+    name: kube-upgrade-node
+  with_items: "{{ groups['kube-node'] | map('extract', hostvars, 'inventory_hostname') }}"
+  loop_control:
+    loop_var: host_item
+  when: 
+    - "kubelet_version.stdout | default('v' + kubernetes_version) != 'v' + kubernetes_version"
+    - "host_item == inventory_hostname"
+    - "kubelet_status.stdout != ''"
+
+- name: Change kubelet local address
+  replace:
+    path: "{{ item }}"
+    regexp: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}"
+    replace: "127.0.0.1"
+  with_items:
+    - /etc/kubernetes/kubelet.conf
+  when:
+  - inventory_hostname not in groups['kube-master']
+  register: kubelet_conf
+
+- name: Change kubelet address
+  replace:
+    path: "{{ item }}"
+    regexp: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}"
+    replace: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+  with_items:
+    - /var/lib/kubelet/config.yaml
+  when:
+  - inventory_hostname not in groups['kube-master']
+  register: kubelet_config
+
+- name: Set kubelet config
+  lineinfile:
+    path: /var/lib/kubelet/kubeadm-flags.env
+    line: 'KUBELET_EXTRA_ARGS="--cloud-provider=external"'
+  register: kubelet_extra_args
+
+- name: Restart kubelet
+  systemd:
+    state: restarted
+    name: kubelet
+    enabled: true
+  when:
+  - inventory_hostname not in groups['kube-master']
+  - kubelet_config.changed or kubelet_conf.changed or kubelet_extra_args.changed
+
+- name: Check node labels
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: "kubectl get node --no-headers --no-headers -o custom-columns=NAME:.metadata.name --selector=node-role.kubernetes.io/node"
+  register: node_label
+  check_mode: no
+  when:
+    - inventory_hostname not in groups['kube-master']
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  changed_when: False
+
+- name: Label nodes
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: "kubectl label nodes {{ inventory_hostname }} node-role.kubernetes.io/node= --overwrite"
+  when:
+    - inventory_hostname not in groups['kube-master']
+    - inventory_hostname not in node_label.stdout 
+  delegate_to: "{{ groups['kube-master'][0] }}"

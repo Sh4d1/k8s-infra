@@ -1,0 +1,13 @@
+---
+- name: CNI - Copy cilium manifest
+  template:
+    src: "cilium.yml"
+    dest: "/etc/kubernetes/cni/cilium.yml"
+  register: cilium_conf
+
+- name: CNI - Apply cilium manifest
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  shell: "kubectl apply -f /etc/kubernetes/cni/cilium.yml"
+  when: "cilium_conf.changed"
+  run_once: true

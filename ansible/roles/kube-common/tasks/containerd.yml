@@ -1,0 +1,41 @@
+---
+- name: Get Containerd
+  unarchive:
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_release_version }}/cri-containerd-cni-{{ containerd_release_version }}-linux-amd64.tar.gz"
+    dest: "/"
+    remote_src: yes
+    exclude: "etc/cni/net.d/10-containerd-net.conflist"
+  register: containerd
+
+- name: Make sure /etc/containerd folder exists
+  file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+
+- name: Copy Containerd config
+  template:
+    src: containerd.toml.j2
+    dest: /etc/containerd/config.toml
+    mode: '0600'
+  register: containerd_config
+
+- name: Enable containerd
+  systemd:
+    daemon_reload: yes
+    name: containerd
+    enabled: true
+
+- name: Start containerd
+  systemd:
+    state: started
+    name: containerd
+    enabled: true
+
+- name: Restart containerd
+  systemd:
+    state: restarted
+    name: containerd
+    daemon_reload: yes
+    enabled: true
+  when: containerd.changed or containerd_config.changed

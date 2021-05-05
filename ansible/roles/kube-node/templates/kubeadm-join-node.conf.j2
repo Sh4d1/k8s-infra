@@ -1,0 +1,16 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    token: "{{ BOOTSTRAP_TOKEN }}"
+    apiServerEndpoint: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}:6443"
+    unsafeSkipCAVerification: true
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+    cloud-provider: "external"
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+address: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+resolvConf: /etc/resolv.conf

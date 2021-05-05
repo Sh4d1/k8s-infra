@@ -1,0 +1,4 @@
+---
+creation_rules:
+- encrypted_regex: '^(ansible_host|subnet|gateway)$'
+  pgp: 2C3E86E982BBE36AD0FBB0270B323237B39B6B5B

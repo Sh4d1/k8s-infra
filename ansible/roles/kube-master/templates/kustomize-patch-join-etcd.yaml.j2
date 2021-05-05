@@ -1,0 +1,37 @@
+{% macro initial_cluster() -%}
+{% for i in range(item.0 + 1) %}
+{% if loop.last -%}
+{{ groups['kube-master'][i] }}=https://{{ hostvars[groups['kube-master'][i]][ansible_private_nic]['ipv4']['address'] }}:2380
+{%- else -%}
+{{ groups['kube-master'][i] }}=https://{{ hostvars[groups['kube-master'][i]][ansible_private_nic]['ipv4']['address'] }}:2380,
+{%- endif -%}
+{% endfor -%}
+{% endmacro -%}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd
+  namespace: kube-system
+spec:
+  containers:
+  - name: etcd
+    command:
+    - etcd
+    - --advertise-client-urls=https://{{ hostvars[item.1][ansible_private_nic]['ipv4']['address'] }}:2379
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --client-cert-auth=true
+    - --data-dir=/var/lib/etcd
+    - --initial-advertise-peer-urls=https://{{ hostvars[item.1][ansible_private_nic]['ipv4']['address'] }}:2380
+    - --initial-cluster={{ initial_cluster() }}
+    - --initial-cluster-state=existing
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --listen-client-urls=https://127.0.0.1:2379,https://{{ hostvars[item.1][ansible_private_nic]['ipv4']['address'] }}:2379
+    - --listen-metrics-urls=http://127.0.0.1:2381
+    - --listen-peer-urls=https://{{ hostvars[item.1][ansible_private_nic]['ipv4']['address'] }}:2380
+    - --name={{ item.1 }}
+    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+    - --peer-client-cert-auth=true
+    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+    - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    - --snapshot-count=10000
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt

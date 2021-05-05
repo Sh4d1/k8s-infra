@@ -1,0 +1,36 @@
+---
+- block:
+  - apt_key:
+      url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+      state: present
+    environment: '{{ proxy_env | default ({}) }}'
+
+  - apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      update_cache: yes
+    environment: '{{ proxy_env | default ({}) }}'
+
+- name: Install kube-common packages
+  apt:
+    name:
+      - "kubelet={{ kubernetes_version }}*"
+      - "kubectl={{ kubernetes_version }}*"
+      - "kubeadm={{ kubernetes_version }}*"
+  environment: '{{ proxy_env | default ({}) }}'
+  register: apt_out
+  ignore_errors: yes
+
+- name: Handle kube-common install errors
+  fail:
+    msg: "{{ apt_out.stderr }}"
+  when: "apt_out.rc | default(0) != 0 and 'Held packages were changed' not in apt_out.stderr"
+
+- name: Hold kube-common packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubectl"
+    - "kubeadm"

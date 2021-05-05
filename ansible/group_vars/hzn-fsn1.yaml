@@ -1,0 +1,27 @@
+cluster_name: "hzn-fsn1"
+
+master_sans:
+
+full_lb_name: "dummy"
+
+kubernetes_version: "1.21.0"
+
+service_network_cidr: "10.96.0.0/16"
+pod_network_cidr: "10.100.0.0/16"
+
+cni: "cilium"
+container_runtime: "containerd"
+
+cilium_version: "1.10.0-rc0"
+
+containerd_release_version: 1.4.4
+
+kube_state_metrics_version: "1.9.7"
+metrics_server_version: "0.4.1"
+
+haproxy_image_repo: "haproxy"
+haproxy_image_tag: "2.1.4-alpine"
+haproxy_config_dir: "/etc/kubernetes/haproxy"
+haproxy_request_cpu: "25m"
+haproxy_request_memory: "32M"
+haproxy_healthcheck_port: 8081

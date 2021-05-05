@@ -1,0 +1,39 @@
+---
+- name: Kubeadm prepare all nodes
+  any_errors_fatal: true
+  gather_facts: true
+  hosts: [kube-node, kube-master]
+  tags:
+    - kube-common
+    - kube
+    - all
+  roles:
+    - { role: kube-common, task: all, tags: common }
+    - { role: kube-haproxy, task: all, tags: haproxy }
+
+- name: Kubeadm prepare masters
+  gather_facts: true
+  any_errors_fatal: true
+  hosts: kube-master
+  tags:
+    - all
+  roles:
+    - { role: kube-master, task: all, tags: ["kube-master", "kube"]}
+
+- name: Kubeadm prepare nodes
+  any_errors_fatal: true
+  gather_facts: true
+  hosts: [kube-node, kube-master]
+  tags:
+    - all
+  roles:
+    - { role: kube-node, task: all, tags: ["kube-node", "kube"]}
+
+- name: Kubeadm deploy cni
+  hosts: kube-master
+  tags:
+    - cni
+    - kube
+    - all
+  roles:
+    - { role: kube-cni }

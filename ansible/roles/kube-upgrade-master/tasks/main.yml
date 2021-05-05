@@ -1,0 +1,75 @@
+---
+- name: Unhold kube-common packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: install
+  with_items:
+    - "kubelet"
+    - "kubectl"
+    - "kubeadm"
+
+- name: Upgrade kubeadm
+  apt:
+    name:
+      - "kubeadm={{ kubernetes_version }}*"
+  environment: '{{ proxy_env | default ({}) }}'
+
+- name: Upgrade Master - Cordon node
+  shell: "kubectl drain {{ inventory_hostname }} --ignore-daemonsets --delete-local-data"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Upgrade Master - Kubeadm Upgrade First Master
+  command: >
+    kubeadm upgrade apply v{{ kubernetes_version }}
+    --yes
+    --etcd-upgrade=false
+    --config /etc/kubernetes/kubeadm-master.conf
+    --experimental-patches /etc/kubernetes/kustomize/
+  when:
+    - inventory_hostname in groups['kube-master'][0] 
+
+- name: Upgrade Matser - Kubeadm Upgrade Other Master
+  command: >
+    kubeadm upgrade node
+    --etcd-upgrade=false
+    --experimental-patches /etc/kubernetes/kustomize/
+  when:
+    - inventory_hostname not in groups['kube-master'][0] 
+
+- name: Upgrade Master - Uncordon node
+  shell: "kubectl uncordon {{ inventory_hostname }}"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Upgrade kubelet and kubectl
+  apt:
+    name:
+      - "kubelet={{ kubernetes_version }}*"
+      - "kubectl={{ kubernetes_version }}*"
+  environment: '{{ proxy_env | default ({}) }}'
+
+- name: Hold kube-common packages
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - "kubelet"
+    - "kubectl"
+    - "kubeadm"
+
+- name: Change kubelet address
+  replace:
+    path: "{{ item }}"
+    regexp: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}"
+    replace: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+  with_items:
+    - /var/lib/kubelet/config.yaml
+
+- name: Restart kubelet
+  systemd:
+    state: restarted
+    name: kubelet
+    enabled: true

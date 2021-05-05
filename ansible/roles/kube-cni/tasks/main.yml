@@ -1,0 +1,8 @@
+---
+- name: CNI - Ensure CNI manifest dir exists
+  file: 
+    path: /etc/kubernetes/cni
+    state: directory
+    mode: 0755
+
+- include: "{{ cni }}.yml"

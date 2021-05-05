@@ -1,0 +1,52 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+apiServer:
+  timeoutForControlPlane: 8m0s
+  certSANs:
+{% for host in groups['kube-master'] | sort %}
+  - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+  - "{{ hostvars[host]['ansible_host'] }}"
+  - "{{ host }}"
+{% endfor %}
+  - 127.0.0.1
+  - localhost
+{% for san in master_sans | select() | sort | unique %}
+  - "{{ san }}"
+{% endfor %}
+etcd:
+  local:
+    serverCertSANs:
+{% for host in groups['kube-master'] | sort %}
+    - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+{% endfor %}
+    peerCertSANs:
+{% for host in groups['kube-master'] | sort %}
+    - "{{ hostvars[host][ansible_private_nic]['ipv4']['address'] }}"
+{% endfor %}
+kind: ClusterConfiguration
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: JoinConfiguration
+controlPlane:
+  certificateKey: "{{ CERT_KEY }}"
+  localAPIEndpoint:
+    advertiseAddress: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+    bindPort: 6443
+discovery:
+  bootstrapToken:
+    token: "{{ BOOTSTRAP_TOKEN }}"
+    apiServerEndpoint: "{{ hostvars[groups['kube-master'][0]][ansible_private_nic]['ipv4']['address'] }}:6443"
+    unsafeSkipCAVerification: true
+nodeRegistration:
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  kubeletExtraArgs:
+    node-ip: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+    cloud-provider: "external"
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+address: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+resolvConf: /etc/resolv.conf

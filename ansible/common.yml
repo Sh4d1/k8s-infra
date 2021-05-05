@@ -1,0 +1,43 @@
+---
+- name: Prepare nodes
+  hosts: [all]
+  gather_facts: true
+  tags:
+    - common
+    - all
+  roles:
+    - { role: common, task: conf }
+    - { role: common, task: packages }
+    - { role: common, task: ntp, tags: ntp }
+
+- name: Servers
+  hosts: all
+  tags:
+    - tailscale
+  roles:
+    - role: artis3n.tailscale
+      vars:
+        tailscale_args: "--advertise-routes={{ private_subnet }} --accept-routes"
+        tailscale_auth_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63363064613363663564626333363265356462663762636635333961373234346136636663316361
+          3030313334313239653130313562373063643737646165320a333061333566613533616264643661
+          66616661313462356263303735323965396339636239373463613163383361343935653434313134
+          3833313263396437340a646235613931323138343262343336343266653034313538343432373965
+          34623566353739663234633764633861316534393563306565613636343535626236
+
+- name: Clear gathered facts 
+  hosts: [all]
+  tasks:
+    - meta: clear_facts
+
+- name: Refresh inventory
+  hosts: [all]
+  tasks:
+    - meta: refresh_inventory
+
+- name: Regather facts
+  hosts: [all]
+  gather_facts: true
+  tags:
+    - common

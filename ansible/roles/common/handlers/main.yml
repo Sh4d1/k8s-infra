@@ -1,0 +1,11 @@
+---
+- name: Restart rsyslog
+  systemd:
+    daemon_reload: yes
+    name: rsyslog
+    state: restarted
+
+- name: Restart systemd-logind
+  service:
+    name: systemd-logind
+    state: restarted

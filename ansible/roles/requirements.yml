@@ -1,0 +1,6 @@
+---
+roles:
+  - name: artis3n.tailscale
+collections:
+  - name: community.general
+  - name: community.kubernetes

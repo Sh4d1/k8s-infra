@@ -1,0 +1,68 @@
+hzn-fsn1:
+    vars:
+        ansible_user: root
+        ansible_become: true
+        tailscale_nic: tailscale0
+        private_nic: enp42s0
+        public_nic: enp41s0
+        ansible_tailscale_nic: ansible_{{ tailscale_nic }}
+        ansible_private_nic: ansible_{{ private_nic }}
+        ansible_public_nic: ansible_{{ public_nic }}
+        private_subnet: 10.0.0.0/24
+        vswitches:
+            - name: public
+              routing_table: 1
+              vlan: 4000
+              gateway: ENC[AES256_GCM,data:K5cAJnFj7NBa3L7B9A==,iv:LQQasRmU5gHQw0OSfEYvY+rrbd9LDQtoMgLVmkj9v38=,tag:XxJ768WT2c0NaimyckM4aw==,type:str]
+              addresses:
+                - '{{ private_ip }}'
+              subnets:
+                - subnet: ENC[AES256_GCM,data:xgV3ZgOM+C6vsHDkjdUa/Q==,iv:F4y6EH4fsoZdlaCY9ol25reZI2dDXQMG16trE32ezOQ=,tag:fEEu8z+8ZZCnFO7Y09FYJQ==,type:str]
+    children:
+        k8s-cluster:
+            children:
+                kube-master:
+                    children:
+                        dedicated:
+                            hosts:
+                                hzn-fsn1-ax51-worker01:
+                                    ansible_host: ENC[AES256_GCM,data:Uyi433zr2dpP+yp9qp+R,iv:aLqLW3dTWhl2XZQZgiGwDbmcTRx1XrRx9Hm7coTLr+U=,tag:6RP4SDO3odK0kUFQ68OfFw==,type:str]
+                                    private_ip: 10.0.0.2/24
+                                hzn-fsn1-ax51-worker02:
+                                    ansible_host: ENC[AES256_GCM,data:6UCb8IdQFkbwUjuVQ/NH,iv:UnE5LSTiqjPWds51DsvrLZaoK4QuEMd67wnW7go1Ji0=,tag:cqjE1e1mXWEfCiFdqk+w2A==,type:str]
+                                    private_ip: 10.0.0.3/24
+                                hzn-fsn1-ax51-worker03:
+                                    ansible_host: ENC[AES256_GCM,data:rt9rvuSvaKxwfbMTAjk=,iv:x2vPf6IWxgh2rE4uGzphSXussvQzNYLiUAX/rNSB9rU=,tag:5T6JBY194z/JEhyGYqDtPg==,type:str]
+                                    private_ip: 10.0.0.4/24
+                kube-node: null
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2021-05-04T22:02:53Z"
+    mac: ENC[AES256_GCM,data:3dvkUL+TZRIE79xV3GtfM3SnPTGGYINE6lvfsaAOakPB4lTStvV2mbHQIOrgdqI/nb+cVg3s2geBTbaR6CsZw8Vrt6d186gAccq7IBY4yXdTPMHtsbw6jfnS3V9PtfuNGoMqI0OOLemvqIppVO/18wawfJJqj8fH0RyG3ECPnAE=,iv:oHMqpoVArrcF5ab8UBRLkDDgU+K/6h7xeprlg7Tt/MY=,tag:kkCyr9iiBaPMSv3c61itQg==,type:str]
+    pgp:
+        - created_at: "2021-05-04T22:02:52Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMAwAAAAAAAAAAAQ/5ASEiVSf5GEj7hS2y7Td+gQV0cJZ72g4HrIHxr0ofjvdP
+            bN7o3bNCCpMIRIftwCokV90UrtcJs1g7ITeMXgkELF4vU9+b9R08ncR2abpDHtiS
+            gdKHsaATUjWju51kJBV9mUyCZHqGmRDjQhBt5Odnw7Jjt8q9t8PMq6qNNnvUxOyO
+            zxbe9pcQDRdYz/5AZAZ3Jf1bteDEvRaRbtxrLfsmOqjm7DlZAtB13AtRWtk3WV5e
+            gtvsdoCPNMB+v5CrvYnV+gdcVy6TDpxcwfTvahKMAufS9xe21mUk8BJbMZ/rKxTr
+            lPSWfIjQIIcnqPl0ZfMwK5HgEzFmrBxo7HGphuqZXRFdSRvQmXsZshv66c5T4cDD
+            CdMhQCwcQ7L8a3IuKhXvJLvCeLqM9bPjo2WbhHF40fseQd1yx+jRCcNx0YJ1UldC
+            C2oixAezTYb6uxxbkDxmeXX8yFfQnn0WmwMVL5nIBMEgHrwpArvfasrYhrfkjT7V
+            Yo01MiIru3/iW0pGkx6G5aVLhVI9NhqfYg8fI2xgJ+e3wIXm6SFFRA/iMCxnuMJo
+            eIYiT7hKZVaWY8kdIi0GlZZwUloQyGGI8/e6yL56l1CY5k+/pl4Mj/mgEuhNVmDm
+            tZMb5UiX5vkX3j5bWV5CWDpw1LeCpuF3Ew+X6hO8rSHqU7+xQP9Vr6HVrVHMS07S
+            XgGAoEx7SMTWRpgrVsSIcfwuBn/XWwCzySem/qBiBV1hB99Xmicemt39eG47aVbQ
+            elsv4PyZy66+oxU9w5Pk0jQe+zhEvVsAgutLN/HwL1XQTari87EnspXAHmekrDE=
+            =y85A
+            -----END PGP MESSAGE-----
+          fp: 2C3E86E982BBE36AD0FBB0270B323237B39B6B5B
+    encrypted_regex: ^(ansible_host|subnet|gateway)$
+    version: 3.7.1

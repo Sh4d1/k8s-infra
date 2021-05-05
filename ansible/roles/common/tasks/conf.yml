@@ -1,0 +1,61 @@
+---
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Set FQDN for hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^127.0.1.1"
+    line: "127.0.1.1 {{ inventory_hostname }}.cluster.local {{ inventory_hostname }}"
+    state: present
+    backup: yes
+  notify:
+    - Restart systemd-logind
+
+- name: Remove Hostname in /etc/hosts 127.0.0.1 line
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^127.0.0.1"
+    line: "127.0.0.1 localhost"
+    state: present
+    backup: yes
+  notify:
+    - Restart systemd-logind
+
+- name: Remove Hostname in /etc/hosts ::1 line
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^::1"
+    line: "::1 ip6-localhost ip6-loopback"
+    state: present
+    backup: yes
+  notify:
+    - Restart systemd-logind
+
+- name: Ensure resolv.conf is linked to the systemd one
+  file:
+    state: link
+    path: /etc/resolv.conf
+    src: /run/systemd/resolve/resolv.conf
+    force: yes
+
+- name: Disable motd-news timer
+  systemd:
+    name: motd-news.timer
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+
+- name: Disable motd-news
+  systemd:
+    name: motd-news.service
+    state: stopped
+    enabled: no
+  ignore_errors: yes
+  changed_when: False
+
+- name: Reset failed motd-news
+  shell: "systemctl reset-failed motd-news"
+  ignore_errors: yes
+  changed_when: False

@@ -1,0 +1,20 @@
+---
+- name: Make sure folder /etc/kubernetes/ exists
+  file: 
+    path: /etc/kubernetes
+    state: directory
+    mode: 0755
+
+- name: Set sysctl settings
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_file: /etc/sysctl.d/90-kubeadm.conf
+    sysctl_set: yes
+    reload: yes
+  with_items:
+    - { name: "net.bridge.bridge-nf-call-iptables", value: 1 }
+    - { name: "net.bridge.bridge-nf-call-ip6tables", value: 1 }
+    - { name: "net.ipv4.ip_forward", value: 1 }
+    - { name: "net.ipv4.ip_nonlocal_bind", value: 1 }

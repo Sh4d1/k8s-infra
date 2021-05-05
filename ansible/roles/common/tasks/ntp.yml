@@ -1,0 +1,5 @@
+- name: Install the NTP daemon to synchronize the clocks to ms.
+  apt: name=ntp
+
+- name: Make sure ntp is started, and is enabled on restart.
+  service: name=ntp state=started enabled=yes

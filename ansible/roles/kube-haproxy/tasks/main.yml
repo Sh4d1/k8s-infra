@@ -1,0 +1,36 @@
+- name: Haproxy | Make haproxy directory
+  file:
+    path: "{{ haproxy_config_dir }}"
+    state: directory
+    mode: 0700
+    owner: root
+
+- name: Haproxy | Write haproxy configuration
+  template:
+    src: haproxy.cfg.j2
+    dest: "{{ haproxy_config_dir }}/haproxy.cfg"
+    owner: root
+    mode: 0755
+    backup: yes
+
+- name: Haproxy | Get checksum from config
+  stat:
+    path: "{{ haproxy_config_dir }}/haproxy.cfg"
+  register: haproxy_stat
+
+- name: Make sure /etc/kubernetes folder exists
+  file:
+    path: /etc/kubernetes/
+    state: directory
+    mode: '0755'
+
+- name: Make sure /etc/kubernetes/manifests folder exists
+  file:
+    path: /etc/kubernetes/manifests
+    state: directory
+    mode: '0755'
+
+- name: Haproxy | Write static pod
+  template:
+    src: haproxy.yml.j2
+    dest: "/etc/kubernetes/manifests/haproxy.yml"

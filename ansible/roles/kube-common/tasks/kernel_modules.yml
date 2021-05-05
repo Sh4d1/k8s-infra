@@ -1,0 +1,48 @@
+---
+- name: Kernel_modules - load nf_conntrack
+  modprobe: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+      #- ip_vs_wrr
+      #- ip_vs_rr
+      #- ip_vs_sh
+      #- ip_vs
+  - nf_conntrack
+
+- name: Kernel_modules - persist nf_contrack kernel modules
+  copy:
+    dest: /etc/modules-load.d/k8s_ip_vs.conf
+    #content: |
+    #  ip_vs_wrr
+    #  ip_vs_rr
+    #  ip_vs_sh
+    #  ip_vs
+    content: |
+      nf_conntrack
+
+- name: Load bridge kernel module ( for /proc/sys/net/bridge/bridge-nf-call-iptables )
+  modprobe: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - bridge
+
+- name: Every reboot load bridge kernel modules
+  copy:
+    dest: "/etc/modules-load.d/k8s_bridge.conf"
+    content: |
+      bridge
+
+- name: Load br_netfilter kernel module (for /proc/sys/net/bridge/bridge-nf-call-iptables in newer kernels)
+  modprobe: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - br_netfilter
+
+- name: Every reboot load bridge and br_netfilter kernel modules
+  copy:
+    dest: "/etc/modules-load.d/k8s_br_netfilter.conf"
+    content: |
+      br_netfilter

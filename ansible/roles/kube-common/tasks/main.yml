@@ -1,0 +1,6 @@
+---
+- include: containerd.yml
+- include: install_k8s_packages.yml
+- include: kernel_modules.yml
+- include: kube_config.yml
+- include: various.yml

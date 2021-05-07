@@ -1,2 +1,6 @@
 ansible/inventory/*.yaml
 !ansible/inventory/*.enc.yaml
+*secret.yaml
+*secrets.yaml
+*secret.yml
+*secrets.yml

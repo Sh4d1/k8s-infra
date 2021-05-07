@@ -21,7 +21,7 @@ metadata:
     cloudflare.com/expose: "true"
 spec:
   virtualhost:
-    fqdn: "${DOMAIN_SECRET}"
+    fqdn: "${SECRET_DOMAIN}"
     tls:
       secretName: certificates/wildcard
   routes:
@@ -51,7 +51,7 @@ metadata:
     cloudflare.com/expose: "true"
 spec:
   virtualhost:
-    fqdn: "blog.${DOMAIN_SECRET}"
+    fqdn: "blog.${SECRET_DOMAIN}"
     tls:
       secretName: certificates/wildcard
   routes:

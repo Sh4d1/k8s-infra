@@ -24,6 +24,7 @@ jobs:
         UGLY_VERSION="$(flux -v)"
         VERSION="v${UGLY_VERSION#*flux version }"
         flux install --version="${VERSION}" \
+          --components-extra=image-reflector-controller,image-automation-controller \
           --export > ./clusters/hzn-fsn1/base/flux-system/gotk-components.yaml
         echo "::set-output name=flux_version::$VERSION"
     - name: Create pull request for Flux upgrade

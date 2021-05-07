@@ -2,7 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - namespaces
-- rook-ceph
 - cert-manager
+- contour
 - external-dns
 - hetzner-cloud-controller-manager
+- rook-ceph

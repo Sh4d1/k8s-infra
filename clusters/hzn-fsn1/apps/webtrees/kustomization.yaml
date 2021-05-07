@@ -5,3 +5,5 @@ resources:
 - db
 - data.yaml
 - secret.enc.yaml
+- deployment.yaml
+- service.yaml

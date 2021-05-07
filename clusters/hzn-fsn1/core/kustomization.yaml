@@ -5,6 +5,7 @@ resources:
 - cert-manager
 - certificates
 - contour
+- datadog
 - external-dns
 - hetzner-cloud-controller-manager
 - metallb

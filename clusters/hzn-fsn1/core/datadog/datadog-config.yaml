@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-controller-manager-config
+  namespace: datadog
+data:
+  auto_conf.yaml: |-
+    ad_identifiers:
+      - kube-controller-manager
+    init_config:
+    instances:
+      - prometheus_url: "https://%%host%%:10257/metrics"
+        bearer_token_auth: true
+        ssl_verify: false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-scheduler-config
+  namespace: datadog
+data:
+  auto_conf.yaml: |-
+    ad_identifiers:
+      - kube-scheduler
+    init_config:
+    instances:
+      - prometheus_url: "https://%%host%%:10259/metrics"
+        bearer_token_auth: true
+        ssl_verify: false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etcd-config
+  namespace: datadog
+data:
+  auto_conf.yaml: |-
+    ad_identifiers:
+      - etcd
+    init_config:
+    instances:
+      - prometheus_url: "https://%%host%%:2379/metrics"
+        tls_cert: /host/etc/kubernetes/pki/etcd/server.crt
+        tls_private_key: /host/etc/kubernetes/pki/etcd/server.key
+        tls_ca_cert: /host/etc/kubernetes/pki/etcd/ca.crt

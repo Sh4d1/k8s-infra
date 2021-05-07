@@ -19,9 +19,13 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/hzn-fsn1
+  path: ./clusters/hzn-fsn1/base
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
   validation: client
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg

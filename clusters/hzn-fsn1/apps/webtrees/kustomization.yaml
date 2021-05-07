@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
 - db
 - data.yaml
-- secret.yaml
+- secret.enc.yaml

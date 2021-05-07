@@ -68,7 +68,7 @@ rules:
   resourceNames:
   - datadog-leader-election # Leader election token
   - datadog-custom-metrics
-  - extension-apiserver-authentication
+  - extension-apiserver-authentication 
   verbs:
   - get
   - update
@@ -160,10 +160,12 @@ kind: RoleBinding
 metadata:
   labels: {}
   name: "datadog-cluster-agent"
+  namespace: datadog
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: extension-apiserver-authentication-reader
+  namespace: kube-system
 subjects:
 - kind: ServiceAccount
   name: datadog-cluster-agent

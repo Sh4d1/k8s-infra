@@ -1,10 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+# core
 - cert-manager.yaml
+- certificates.yaml
 - contour.yaml
 - external-dns.yaml
 - flux-system.yaml
 - kube-system.yaml
 - metallb-system.yaml
 - rook-ceph.yaml
+# apps
+- resume.yaml

@@ -1,0 +1,17 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard
+  namespace: certificates
+spec:
+  commonName: "*.${SECRET_DOMAIN}"
+  dnsNames:
+  - "*.${SECRET_DOMAIN}"
+  - "*.${SECRET_DOMAIN_ALT}"
+  - "*.${SECRET_DOMAIN_DEV}"
+  - "*.${SECRET_DOMAIN_TEST}"
+  issuerRef:
+    name: cloudflare-dns
+    kind: ClusterIssuer
+  secretName: wildcard

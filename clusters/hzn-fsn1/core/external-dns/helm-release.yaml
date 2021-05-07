@@ -27,17 +27,17 @@ spec:
     - service
     provider: cloudflare
     extraArgs:
-      contour-load-balancer: projectcontour/envoy
+      contour-load-balancer: contour/contour-envoy
     cloudflare:
       secretName: cloudflare-api-key
       email: "${SECRET_EMAIL}"
       proxied: true
     policy: sync
     domainFilters:
-    - "${SECRET_DOMAIN_01}"
-    - "${SECRET_DOMAIN_02}"
-    - "${SECRET_DOMAIN_03}"
-    - "${SECRET_DOMAIN_04}"
+    - "${SECRET_DOMAIN}"
+    - "${SECRET_DOMAIN_ALT}"
+    - "${SECRET_DOMAIN_DEV}"
+    - "${SECRET_DOMAIN_TEST}"
     crd:
       create: false
     annotationFilter: "cloudflare.com/expose in (true)"

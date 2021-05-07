@@ -16,7 +16,7 @@ spec:
         namespace: flux-system
   values:
     image:
-      tag: 17-fpm-alpine
+      tag: 18-fpm-alpine
     nextcloud:
       host: "cloud.${SECRET_DOMAIN_ALT}"
       username: patrik

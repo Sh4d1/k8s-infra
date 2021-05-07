@@ -17,6 +17,7 @@ resources:
 - bitwarden.yaml
 - blog.yaml
 - ferdi.yaml
+- nextcloud.yaml
 - resume.yaml
 - seedbox.yaml
 - webtrees.yaml

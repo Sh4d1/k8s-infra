@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nextcloud-db
+  namespace: nextcloud
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: postgresql
+      version: 10.3.14
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+  values:
+    global:
+      storageClass: block
+    replication:
+      enabled: true
+    existingSecret: db-secret
+    postgresqlUsername: nextcloud
+    postgresqlDatabase: nextcloud

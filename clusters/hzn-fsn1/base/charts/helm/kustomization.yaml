@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
 - bitnami-charts.yaml
 - jetstack-charts.yaml
+- nextcloud-charts.yaml
 - rook-ceph-charts.yaml

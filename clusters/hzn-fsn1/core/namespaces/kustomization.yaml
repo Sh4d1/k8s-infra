@@ -11,4 +11,5 @@ resources:
 - metallb-system.yaml
 - rook-ceph.yaml
 # apps
+- blog.yaml
 - resume.yaml

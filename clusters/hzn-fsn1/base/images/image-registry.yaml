@@ -1,0 +1,9 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1alpha2
+kind: ImageRepository
+metadata:
+  name: blog
+  namespace: flux-system
+spec:
+  image: ghcr.io/sh4d1/blog
+  interval: 1m0s

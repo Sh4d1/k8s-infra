@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog
+  namespace: blog
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: blog
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: blog
+  namespace: blog
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "${DOMAIN_SECRET}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: blog
+      port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redirect-blog
+  namespace: blog
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: redirect-blog
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: redirect-blog
+  namespace: blog
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "blog.${DOMAIN_SECRET}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: redirect-blog
+      port: 80

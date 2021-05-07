@@ -3,7 +3,8 @@ kind: Kustomization
 resources:
 - cert-manager.yaml
 - contour.yaml
+- external-dns.yaml
 - flux-system.yaml
 - kube-system.yaml
+- metallb-system.yaml
 - rook-ceph.yaml
-- external-dns.yaml

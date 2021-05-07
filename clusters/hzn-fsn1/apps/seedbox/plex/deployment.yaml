@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: plex
+  name: plex
+  namespace: seedbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plex
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: plex
+    spec:
+      containers:
+      - image: docker.io/plexinc/pms-docker:1.22.3.4392-d7c624def
+        name: plex
+        ports:
+        - containerPort: 32400
+          name: http
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: VERSION
+          value: latest
+        - name: TZ
+          value: "Europe/Paris"
+        - name: PLEX_CLAIM
+          valueFrom:
+            secretKeyRef:
+              name: plex-secret
+              key: plex-claim
+        volumeMounts:
+        - mountPath: "/config"
+          name: plex-config
+        - mountPath: "/data/movies"
+          name: plex-movies
+        - mountPath: "/data/tvshows"
+          name: plex-tvshows
+        - mountPath: "/transcode"
+          name: plex-transcode
+      volumes:
+      - name: plex-config
+        persistentVolumeClaim:
+          claimName: plex-config
+      - name: plex-movies
+        persistentVolumeClaim:
+          claimName: plex-movies
+      - name: plex-tvshows
+        persistentVolumeClaim:
+          claimName: plex-tvshows
+      - name: plex-transcode
+        emptyDir: {}

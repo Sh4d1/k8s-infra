@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -24,45 +25,45 @@ spec:
         imagePullPolicy: Always
         name: datadog-agent
         ports:
-          - containerPort: 8125
-            # Custom metrics via DogStatsD - uncomment this section to enable custom metrics collection
-            # hostPort: 8125
-            name: dogstatsdport
-            protocol: UDP
-          - containerPort: 8126
-            # Trace Collection (APM) - uncomment this section to enable APM
-            # hostPort: 8126
-            name: traceport
-            protocol: TCP
+        - containerPort: 8125
+          # Custom metrics via DogStatsD - uncomment this section to enable custom metrics collection
+          # hostPort: 8125
+          name: dogstatsdport
+          protocol: UDP
+        - containerPort: 8126
+          # Trace Collection (APM) - uncomment this section to enable APM
+          # hostPort: 8126
+          name: traceport
+          protocol: TCP
         env:
-          - name: DD_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: datadog-secret
-                key: api-key
-          - name: DD_COLLECT_KUBERNETES_EVENTS
-            value: "true"
-          - name: KUBERNETES
-            value: "true"
-          - name: DD_HEALTH_PORT
-            value: "5555"
-          - name: DD_KUBERNETES_KUBELET_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
-          - name: DD_CLUSTER_AGENT_ENABLED
-            value: "true"
-          - name: DD_CLUSTER_AGENT_AUTH_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: datadog-auth-token
-                key: token
-          - name: DD_APM_ENABLED
-            value: "true"
-          - name: DD_KUBELET_TLS_VERIFY
-            value: "false"
-          - name: DD_CRI_SOCKET_PATH
-            value: "/var/run/containerd/containerd.sock"
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: datadog-secret
+              key: api-key
+        - name: DD_COLLECT_KUBERNETES_EVENTS
+          value: "true"
+        - name: KUBERNETES
+          value: "true"
+        - name: DD_HEALTH_PORT
+          value: "5555"
+        - name: DD_KUBERNETES_KUBELET_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_CLUSTER_AGENT_ENABLED
+          value: "true"
+        - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: datadog-auth-token
+              key: token
+        - name: DD_APM_ENABLED
+          value: "true"
+        - name: DD_KUBELET_TLS_VERIFY
+          value: "false"
+        - name: DD_CRI_SOCKET_PATH
+          value: "/var/run/containerd/containerd.sock"
         resources:
           requests:
             memory: "512Mi"
@@ -71,29 +72,29 @@ spec:
             memory: "512Mi"
             cpu: "400m"
         volumeMounts:
-          - name: containerdsocket
-            mountPath: /var/run/containerd/containerd.sock
-          - name: procdir
-            mountPath: /host/proc
-            readOnly: true
-          - name: var-run
-            mountPath: /host/var/run
-            readOnly: true
-          - name: cgroups
-            mountPath: /host/sys/fs/cgroup
-            readOnly: true
-          - name: kube-controller-manager-config
-            mountPath: /etc/datadog-agent/conf.d/kube_controller_manager.d/auto_conf.yaml
-            subPath: auto_conf.yaml
-          - name: kube-scheduler-config
-            mountPath: /etc/datadog-agent/conf.d/kube_scheduler.d/auto_conf.yaml
-            subPath: auto_conf.yaml
-          - name: etcd-config
-            mountPath: /etc/datadog-agent/conf.d/etcd.d/auto_conf.yaml
-            subPath: auto_conf.yaml
-          - name: etcd-certs
-            mountPath: /host/etc/kubernetes/pki/etcd
-            readOnly: true
+        - name: containerdsocket
+          mountPath: /var/run/containerd/containerd.sock
+        - name: procdir
+          mountPath: /host/proc
+          readOnly: true
+        - name: var-run
+          mountPath: /host/var/run
+          readOnly: true
+        - name: cgroups
+          mountPath: /host/sys/fs/cgroup
+          readOnly: true
+        - name: kube-controller-manager-config
+          mountPath: /etc/datadog-agent/conf.d/kube_controller_manager.d/auto_conf.yaml
+          subPath: auto_conf.yaml
+        - name: kube-scheduler-config
+          mountPath: /etc/datadog-agent/conf.d/kube_scheduler.d/auto_conf.yaml
+          subPath: auto_conf.yaml
+        - name: etcd-config
+          mountPath: /etc/datadog-agent/conf.d/etcd.d/auto_conf.yaml
+          subPath: auto_conf.yaml
+        - name: etcd-certs
+          mountPath: /host/etc/kubernetes/pki/etcd
+          readOnly: true
         livenessProbe:
           httpGet:
             path: /health
@@ -104,27 +105,27 @@ spec:
           successThreshold: 1
           failureThreshold: 3
       volumes:
-        - hostPath:
-            path: /var/run/containerd/containerd.sock
-          name: containerdsocket
-        - hostPath:
-            path: /proc
-          name: procdir
-        - hostPath:
-            path: /var/run
-          name: var-run
-        - hostPath:
-            path: /sys/fs/cgroup
-          name: cgroups
-        - name: kube-controller-manager-config
-          configMap:
-            name: kube-controller-manager-config
-        - name: kube-scheduler-config
-          configMap:
-            name: kube-scheduler-config
-        - name: etcd-config
-          configMap:
-            name: etcd-config
-        - name: etcd-certs
-          hostPath:
-            path: /etc/kubernetes/pki/etcd/
+      - hostPath:
+          path: /var/run/containerd/containerd.sock
+        name: containerdsocket
+      - hostPath:
+          path: /proc
+        name: procdir
+      - hostPath:
+          path: /var/run
+        name: var-run
+      - hostPath:
+          path: /sys/fs/cgroup
+        name: cgroups
+      - name: kube-controller-manager-config
+        configMap:
+          name: kube-controller-manager-config
+      - name: kube-scheduler-config
+        configMap:
+          name: kube-scheduler-config
+      - name: etcd-config
+        configMap:
+          name: etcd-config
+      - name: etcd-certs
+        hostPath:
+          path: /etc/kubernetes/pki/etcd/

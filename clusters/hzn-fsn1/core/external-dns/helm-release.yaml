@@ -17,10 +17,6 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    #image:
-    #  registry: k8s.gcr.io
-    #  repository: external-dns/external-dns
-    #  tag: v0.8.0
     nameOverride: external-dns
     sources:
     - contour-httpproxy

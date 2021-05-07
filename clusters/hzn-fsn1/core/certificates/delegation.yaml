@@ -1,3 +1,4 @@
+---
 apiVersion: projectcontour.io/v1
 kind: TLSCertificateDelegation
 metadata:
@@ -5,6 +6,6 @@ metadata:
   namespace: certificates
 spec:
   delegations:
-    - secretName: wildcard
-      targetNamespaces:
-      - "*"
+  - secretName: wildcard
+    targetNamespaces:
+    - "*"

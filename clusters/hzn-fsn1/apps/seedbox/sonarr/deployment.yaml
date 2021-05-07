@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sonarr
+  name: sonarr
+  namespace: seedbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      containers:
+      - image: docker.io/linuxserver/sonarr:3.0.6.1196-ls104
+        name: sonarr
+        ports:
+        - containerPort: 8989
+          name: http
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - mountPath: "/config"
+          name: sonarr-config
+        - mountPath: "/downloads"
+          name: torrent-downloads
+        - mountPath: "/tv"
+          name: plex-tvshows
+      volumes:
+      - name: sonarr-config
+        persistentVolumeClaim:
+          claimName: sonarr-config
+      - name: plex-tvshows
+        persistentVolumeClaim:
+          claimName: plex-tvshows
+      - name: torrent-downloads
+        persistentVolumeClaim:
+          claimName: torrent-downloads

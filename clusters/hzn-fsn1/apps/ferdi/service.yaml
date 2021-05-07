@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ferdi
+  namespace: ferdi
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ferdi
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: ferdi
+  namespace: ferdi
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "ferdi.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: ferdi
+      port: 80

@@ -15,5 +15,6 @@ resources:
 - rook-ceph.yaml
 # apps
 - blog.yaml
+- ferdi.yaml
 - resume.yaml
 - seedbox.yaml

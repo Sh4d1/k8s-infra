@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ferdi-data
+  namespace: ferdi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: block
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ferdi-database
+  namespace: ferdi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: block

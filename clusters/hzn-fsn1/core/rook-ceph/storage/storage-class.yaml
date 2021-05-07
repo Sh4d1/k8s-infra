@@ -32,6 +32,7 @@ kind: StorageClass
 metadata:
   name: fs
 provisioner: rook-ceph.cephfs.csi.ceph.com
+allowVolumeExpansion: true
 parameters:
   clusterID: rook-ceph
   fsName: fs

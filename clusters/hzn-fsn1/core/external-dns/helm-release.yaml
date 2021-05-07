@@ -23,7 +23,7 @@ spec:
     #  tag: v0.8.0
     nameOverride: external-dns
     sources:
-    - contour-httproxy
+    - contour-httpproxy
     - service
     provider: cloudflare
     extraArgs:

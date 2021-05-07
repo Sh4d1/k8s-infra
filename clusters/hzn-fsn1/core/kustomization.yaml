@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - namespaces
 - cert-manager
+- contour
 - external-dns
 - hetzner-cloud-controller-manager
 - metallb

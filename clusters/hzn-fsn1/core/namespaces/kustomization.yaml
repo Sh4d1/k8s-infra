@@ -5,6 +5,7 @@ resources:
 - cert-manager.yaml
 - certificates.yaml
 - contour.yaml
+- contour-auth.yaml
 - datadog.yaml
 - external-dns.yaml
 - flux-system.yaml

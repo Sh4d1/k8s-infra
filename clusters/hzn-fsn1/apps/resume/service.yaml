@@ -21,7 +21,7 @@ metadata:
     cloudflare.com/expose: "true"
 spec:
   virtualhost:
-    fqdn: "resume."${SECRET_DOMAIN}"
+    fqdn: "resume.${SECRET_DOMAIN}"
     tls:
       secretName: certificates/wildcard
   routes:

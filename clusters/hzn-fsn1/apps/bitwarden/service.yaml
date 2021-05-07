@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bitwarden
+  namespace: bitwarden
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: bitwarden
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: bitwarden
+  namespace: bitwarden
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "password.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: bitwarden
+      port: 80
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: bitwarden-cyvoct
+  namespace: bitwarden
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "password.${SECRET_DOMAIN_ALT}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: bitwarden
+      port: 80

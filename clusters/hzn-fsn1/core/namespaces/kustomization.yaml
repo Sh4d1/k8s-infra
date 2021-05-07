@@ -14,6 +14,7 @@ resources:
 - metallb-system.yaml
 - rook-ceph.yaml
 # apps
+- bitwarden.yaml
 - blog.yaml
 - ferdi.yaml
 - resume.yaml

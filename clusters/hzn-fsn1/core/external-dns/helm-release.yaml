@@ -27,7 +27,7 @@ spec:
     - service
     provider: cloudflare
     extraArgs:
-    - --contour-load-balancer=projectcontour/envoy
+      contour-load-balancer: projectcontour/envoy
     cloudflare:
       secretName: cloudflare-api-key
       email: "${SECRET_EMAIL}"
@@ -40,8 +40,6 @@ spec:
     - "${SECRET_DOMAIN_04}"
     crd:
       create: false
-      apiversion: externaldns.k8s.io/v1alpha1
-      kind: DNSEndpoint
     annotationFilter: "cloudflare.com/expose in (true)"
     resources:
       requests:

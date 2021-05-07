@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: htpasswd
-  namespace: projectcontour-auth
+  namespace: contour-auth
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -29,7 +29,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: htpasswd
-  namespace: projectcontour-auth
+  namespace: contour-auth
 ---
 apiVersion: v1
 kind: Service
@@ -37,7 +37,7 @@ metadata:
   labels:
     app.kubernetes.io/name: htpasswd
   name: htpasswd
-  namespace: projectcontour-auth
+  namespace: contour-auth
 spec:
   ports:
   - name: auth
@@ -54,7 +54,7 @@ metadata:
   labels:
     app.kubernetes.io/name: htpasswd
   name: htpasswd
-  namespace: projectcontour-auth
+  namespace: contour-auth
 spec:
   replicas: 1
   selector:
@@ -99,7 +99,7 @@ apiVersion: cert-manager.io/v1alpha3
 kind: Certificate
 metadata:
   name: htpasswd
-  namespace: projectcontour-auth
+  namespace: contour-auth
 spec:
   dnsNames:
   - htpasswd

@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: radarr
+  name: radarr
+  namespace: seedbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      containers:
+      - image: docker.io/linuxserver/radarr:3.0.2.4552-ls102
+        name: radarr
+        ports:
+        - containerPort: 7878
+          name: http
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - mountPath: "/config"
+          name: radarr-config
+        - mountPath: "/downloads"
+          name: torrent-downloads
+        - mountPath: "/movies"
+          name: plex-movies
+      volumes:
+      - name: radarr-config
+        persistentVolumeClaim:
+          claimName: radarr-config
+      - name: plex-movies
+        persistentVolumeClaim:
+          claimName: plex-movies
+      - name: torrent-downloads
+        persistentVolumeClaim:
+          claimName: torrent-downloads

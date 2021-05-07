@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resume
+  namespace: resume
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: resume
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: resume
+  namespace: resume
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "resume.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: resume
+      port: 80

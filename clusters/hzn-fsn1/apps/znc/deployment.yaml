@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: znc
+  namespace: znc
+spec:
+  selector:
+    matchLabels:
+      app: znc
+  template:
+    metadata:
+      labels:
+        app: znc
+      name: znc
+    spec:
+      containers:
+      - image: docker.io/znc
+        name: znc
+        ports:
+        - containerPort: 1337
+          name: znc
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/znc-data"
+          name: znc-data
+      volumes:
+      - name: znc-data
+        persistentVolumeClaim:
+          claimName: znc-data

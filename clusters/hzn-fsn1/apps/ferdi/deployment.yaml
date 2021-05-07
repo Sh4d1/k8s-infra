@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ferdi
+  name: ferdi
+  namespace: ferdi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ferdi
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ferdi
+    spec:
+      containers:
+      - image: docker.io/getferdi/ferdi-server
+        name: ferdi
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: IS_CREATION_ENABLED
+          value: "false"
+        - name: CONNECT_WITH_FRANZ
+          value: "false"
+        - name: MAIL_SSL
+          value: "true"
+        - name: EXTERNAL_DOMAIN
+          value: "ferdi.${SECRET_DOMAIN}"
+        - name: NODE_ENV
+          value: "production"
+        volumeMounts:
+        - mountPath: "/config"
+          name: ferdi-data
+        - mountPath: "/app/database"
+          name: ferdi-database
+      volumes:
+      - name: ferdi-data
+        persistentVolumeClaim:
+          claimName: ferdi-data
+      - name: ferdi-database
+        persistentVolumeClaim:
+          claimName: ferdi-database

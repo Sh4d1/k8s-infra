@@ -1,0 +1,44 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: external-dns
+spec:
+  interval: 5m
+  chart:
+    spec:
+      # renovate: registryUrl=https://charts.bitnami.com/bitnami
+      chart: external-dns
+      version: 4.12.3
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-charts
+        namespace: flux-system
+      interval: 5m
+  values:
+    nameOverride: external-dns
+    sources:
+    - contour-httpproxy
+    - service
+    provider: cloudflare
+    extraArgs:
+      contour-load-balancer: contour/contour-envoy
+    cloudflare:
+      secretName: cloudflare-api-key
+      email: "${SECRET_EMAIL}"
+      proxied: true
+    policy: sync
+    domainFilters:
+    - "${SECRET_DOMAIN}"
+    - "${SECRET_DOMAIN_ALT}"
+    - "${SECRET_DOMAIN_DEV}"
+    crd:
+      create: false
+    annotationFilter: "cloudflare.com/expose in (true)"
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 25m
+      limits:
+        memory: 250Mi

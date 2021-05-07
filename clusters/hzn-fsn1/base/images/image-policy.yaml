@@ -1,0 +1,15 @@
+---
+apiVersion: image.toolkit.fluxcd.io/v1alpha2
+kind: ImagePolicy
+metadata:
+  name: blog
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: blog
+  filterTags:
+    pattern: '^[a-fA-F0-9]+-(?P<timestamp>.*)$'
+    extract: '$timestamp'
+  policy:
+    numerical:
+      order: asc

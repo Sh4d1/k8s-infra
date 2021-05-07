@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitwarden
+  namespace: bitwarden
+  labels:
+    app: bitwarden
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitwarden
+  template:
+    metadata:
+      labels:
+        app: bitwarden
+    spec:
+      containers:
+      - name: bitwarden
+        image: docker.io/vaultwarden/server:1.21.0
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        env:
+        - name: SIGNUPS_ALLOWED
+          value: "false"
+        - name: SIGNUPS_VERIFY
+          value: "true"
+        - name: SIGNUPS_DOMAINS_WHITELIST
+          value: "${SECRET_DOMAIN},${SECRET_DOMAIN_ALT}"
+        - name: DOMAIN
+          value: "https://password.${SECRET_DOMAIN}"
+        envFrom:
+        - secretRef:
+            name: bitwarden-secret
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: bitwarden-data

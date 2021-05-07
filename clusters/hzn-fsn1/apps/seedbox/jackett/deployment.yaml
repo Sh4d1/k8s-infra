@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jackett
+  name: jackett
+  namespace: seedbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jackett
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: jackett
+    spec:
+      containers:
+      - image: docker.io/linuxserver/jackett
+        name: jackett
+        ports:
+        - containerPort: 9117
+          name: http
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - mountPath: "/config"
+          name: jackett-config
+        - mountPath: "/downloads"
+          name: torrent-downloads
+      volumes:
+      - name: jackett-config
+        persistentVolumeClaim:
+          claimName: jackett-config
+      - name: torrent-downloads
+        persistentVolumeClaim:
+          claimName: torrent-downloads

@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex
+  namespace: seedbox
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 32400
+  selector:
+    app: plex
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: plex
+  namespace: seedbox
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  virtualhost:
+    fqdn: "plex.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: plex
+      port: 80

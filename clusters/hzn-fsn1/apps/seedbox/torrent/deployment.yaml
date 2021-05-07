@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: torrent
+  name: torrent
+  namespace: seedbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: torrent
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: torrent
+    spec:
+      containers:
+      - image: docker.io/dperson/openvpn-client
+        name: vpn
+        args:
+        - -r 10.0.0.0/8
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        volumeMounts:
+        - mountPath: "/dev/net/tun"
+          name: tun
+        - mountPath: "/vpn"
+          name: torrent-vpn
+      - image: docker.io/linuxserver/transmission
+        name: torrent
+        ports:
+        - containerPort: 9091
+          name: http
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        volumeMounts:
+        - mountPath: "/config"
+          name: torrent-config
+        - mountPath: "/downloads"
+          name: torrent-downloads
+        - mountPath: "/watch"
+          name: torrent-watch
+      volumes:
+      - name: torrent-config
+        persistentVolumeClaim:
+          claimName: torrent-config
+      - name: torrent-watch
+        persistentVolumeClaim:
+          claimName: torrent-watch
+      - name: torrent-downloads
+        persistentVolumeClaim:
+          claimName: torrent-downloads
+      - name: torrent-vpn
+        secret:
+          secretName: vpn-secret
+      - name: tun
+        hostPath:
+          path: "/dev/net/tun"

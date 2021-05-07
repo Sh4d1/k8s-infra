@@ -20,3 +20,4 @@ resources:
 - resume.yaml
 - seedbox.yaml
 - webtrees.yaml
+- znc.yaml

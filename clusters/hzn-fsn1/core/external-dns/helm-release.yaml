@@ -37,7 +37,6 @@ spec:
     - "${SECRET_DOMAIN}"
     - "${SECRET_DOMAIN_ALT}"
     - "${SECRET_DOMAIN_DEV}"
-    - "${SECRET_DOMAIN_TEST}"
     crd:
       create: false
     annotationFilter: "cloudflare.com/expose in (true)"

@@ -10,7 +10,6 @@ spec:
   - "*.${SECRET_DOMAIN}"
   - "*.${SECRET_DOMAIN_ALT}"
   - "*.${SECRET_DOMAIN_DEV}"
-  - "*.${SECRET_DOMAIN_TEST}"
   issuerRef:
     name: cloudflare-dns
     kind: ClusterIssuer

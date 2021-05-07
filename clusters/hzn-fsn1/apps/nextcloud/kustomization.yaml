@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
 - db
 - data.yaml
-# - deployment.yaml
-# - service.yaml
+- deployment.yaml
+- service.yaml

@@ -5,3 +5,4 @@ resources:
 - flux-system.yaml
 - kube-system.yaml
 - rook-ceph.yaml
+- external-dns.yaml

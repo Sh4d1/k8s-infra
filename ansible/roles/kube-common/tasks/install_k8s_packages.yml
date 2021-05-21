@@ -1,15 +1,18 @@
 ---
 - block:
-  - apt_key:
+  - get_url:
       url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-      state: present
-    environment: '{{ proxy_env | default ({}) }}'
+      dest: "/usr/share/keyrings/kubernetes-archive-keyring.gpg"
 
   - apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      repo: 'deb http://apt.kubernetes.io/ kubernetes-xenial main'
+      state: absent
+      update_cache: yes
+
+  - apt_repository:
+      repo: 'deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] http://apt.kubernetes.io/ kubernetes-xenial main'
       state: present
       update_cache: yes
-    environment: '{{ proxy_env | default ({}) }}'
 
 - name: Install kube-common packages
   apt:
@@ -17,7 +20,6 @@
       - "kubelet={{ kubernetes_version }}*"
       - "kubectl={{ kubernetes_version }}*"
       - "kubeadm={{ kubernetes_version }}*"
-  environment: '{{ proxy_env | default ({}) }}'
   register: apt_out
   ignore_errors: yes
 

@@ -23,6 +23,6 @@ spec:
       manageCRDs: false
     envoy:
       service:
-        type: ClusterIP
-        externalTrafficPolicy: ""
+        type: NodePort
+        externalTrafficPolicy: "Cluster"
       useHostPort: true

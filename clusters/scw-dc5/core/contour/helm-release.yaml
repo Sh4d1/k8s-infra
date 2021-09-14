@@ -23,6 +23,9 @@ spec:
       manageCRDs: false
     envoy:
       service:
-        type: NodePort
-        externalTrafficPolicy: "Cluster"
+        type: ClusterIP
+        externalTrafficPolicy: ""
       useHostPort: true
+      containerPorts:
+        http: 8080
+        https: 8443

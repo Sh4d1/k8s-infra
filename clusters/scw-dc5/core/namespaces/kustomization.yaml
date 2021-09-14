@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+# core
+- cert-manager.yaml
+- certificates.yaml
+- contour.yaml
+- contour-auth.yaml
+- flux-system.yaml
+- kube-system.yaml
+# apps
+- bitwarden.yaml
+- blog.yaml
+- ferdi.yaml
+- nextcloud.yaml
+- resume.yaml
+- seedbox.yaml
+- webtrees.yaml
+- znc.yaml

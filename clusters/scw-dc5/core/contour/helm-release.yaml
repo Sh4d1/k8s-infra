@@ -24,4 +24,5 @@ spec:
     envoy:
       service:
         type: ClusterIP
+        externalTrafficPolicy: ""
       useHostPort: true

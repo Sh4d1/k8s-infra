@@ -33,13 +33,6 @@
   notify:
     - Restart systemd-logind
 
-- name: Ensure resolv.conf is linked to the systemd one
-  file:
-    state: link
-    path: /etc/resolv.conf
-    src: /run/systemd/resolve/resolv.conf
-    force: yes
-
 - name: Disable motd-news timer
   systemd:
     name: motd-news.timer
@@ -59,3 +52,10 @@
   shell: "systemctl reset-failed motd-news"
   ignore_errors: yes
   changed_when: False
+
+- name: Create additional directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop: "{{ create_dirs }} "
+  when: create_dirs is defined

@@ -26,17 +26,17 @@
     --yes
     --etcd-upgrade=false
     --config /etc/kubernetes/kubeadm-master.conf
-    --experimental-patches /etc/kubernetes/kustomize/
+    --patches /etc/kubernetes/kustomize/
   when:
-    - inventory_hostname in groups['kube-master'][0] 
+    - inventory_hostname in groups['kube-master'][0]
 
 - name: Upgrade Matser - Kubeadm Upgrade Other Master
   command: >
     kubeadm upgrade node
     --etcd-upgrade=false
-    --experimental-patches /etc/kubernetes/kustomize/
+    --patches /etc/kubernetes/kustomize/
   when:
-    - inventory_hostname not in groups['kube-master'][0] 
+    - inventory_hostname not in groups['kube-master'][0]
 
 - name: Upgrade Master - Uncordon node
   shell: "kubectl uncordon {{ inventory_hostname }}"

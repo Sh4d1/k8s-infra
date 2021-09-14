@@ -1,0 +1,8 @@
+---
+- name: Set up backups and restore if needed
+  hosts: [all]
+  gather_facts: true
+  tags:
+    - backups
+  roles:
+    - { role: backup }

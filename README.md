@@ -25,12 +25,14 @@ Though at work, I was trying to automate everything, my personal setup was not p
 
 So 2021, new year and all that, it was THE year to finally automate everyhting. Disclaimer: even though I'd like a home cluster, I've got no place to host it in my flat yet!
 
-After some reflection, and testing, I ended up choosing [baremetal Hetzner servers](https://www.hetzner.com/). Hence the following part, describing my setup.
+After some reflection, and testing, I ended up choosing [baremetal Hetzner servers](https://www.hetzner.com/). Hence my old setup.
 
-## Setup
+Now I have switched to a single node install.
 
-I've chosen to use three servers, acting as worker and control plane. 
-They are linked with a [vSwitch](https://docs.hetzner.com/robot/dedicated-server/network/vswitch/), everything binding to the private IP, except SSH. 
+## Setup (old)
+
+I've chosen to use three servers, acting as worker and control plane.
+They are linked with a [vSwitch](https://docs.hetzner.com/robot/dedicated-server/network/vswitch/), everything binding to the private IP, except SSH.
 
 I've written sone basic [Ansible](https://www.ansible.com/) [roles](./ansible/roles), in order to set up the Kubernetes cluster. Well not so basic, it supports a Kubernetes version rolling upgrade :smile:!
 

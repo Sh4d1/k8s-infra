@@ -1,0 +1,4 @@
+[{{ item.name }}-s3]
+backend-login: {{ item.s3_access_key }}
+backend-password: {{ item.s3_secret_key }}
+storage-url: s3c://{{ item.s3_url }}

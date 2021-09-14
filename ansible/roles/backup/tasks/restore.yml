@@ -1,0 +1,19 @@
+---
+- name: Check if directory has files
+  find:
+    paths: "{{ item.location }}"
+    file_type: directory
+  register: files_found
+
+- fail:
+    msg: "The {{ item.location }} directory is not empty, can not restore"
+  when: files_found.examined > 0
+  ignore_errors: yes
+
+- name:
+  shell: duplicity restore --s3-use-new-style "s3://{{ s3_backup.url }}/{{ s3_backup.bucket}}/{{ item.restore_prefix | default ('') }}{{ item.name }}" {{ item.location }}
+  environment:
+    PASSPHRASE: "{{ s3_backup.gpg_passphrase }}"
+    AWS_ACCESS_KEY_ID: "{{ s3_backup.access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ s3_backup.secret_key }}"
+  when: files_found.examined == 0

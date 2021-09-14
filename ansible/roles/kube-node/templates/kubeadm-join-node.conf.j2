@@ -8,7 +8,9 @@ discovery:
 nodeRegistration:
   kubeletExtraArgs:
     node-ip: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+{% if register_cloud_provider %}
     cloud-provider: "external"
+{% endif %}
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration

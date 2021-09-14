@@ -1,0 +1,8 @@
+---
+- name: s3ql
+  hosts: [all]
+  gather_facts: true
+  tags:
+    - s3ql
+  roles:
+    - { role: s3ql }

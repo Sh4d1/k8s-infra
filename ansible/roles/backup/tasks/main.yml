@@ -1,0 +1,95 @@
+---
+- name: Set up backups/restore
+  when: backups is defined and s3_backup is defined
+  block:
+
+  - name: Install backups utilities
+    apt:
+      name:
+        - duplicity
+        - python3-boto
+        - python3-boto3
+        - python3-botocore
+      state: present
+
+  - name: Check if need to download the gpg public key
+    stat:
+      path: "/root/{{ backups.gpg_key_name }}.pub"
+    register: public_key
+
+  - name: Check if need to download the gpg private key
+    stat:
+      path: "/root/{{ backups.gpg_key_name }}.key"
+    register: private_key
+
+  - name: Download the public key
+    amazon.aws.aws_s3:
+      bucket: "{{ s3_backup.bucket }}"
+      region: "{{ s3_backup.region }}"
+      object: "{{ item }}"
+      dest: "/root/{{ backups.gpg_key_name }}.pub"
+      mode: get
+      s3_url: "https://{{ s3_backup.url }}"
+      aws_access_key: "{{ s3_backup.access_key }}"
+      aws_secret_key: "{{ s3_backup.secret_key }}"
+    when: public_key.stat.exists == False
+
+  - name: Download the private key
+    amazon.aws.aws_s3:
+      bucket: "{{ s3_backup.bucket }}"
+      region: "{{ s3_backup.region }}"
+      object: "{{ item }}"
+      dest: "/root/{{ backups.gpg_key_name }}.key"
+      mode: get
+      s3_url: "https://{{ s3_backup.url }}"
+      aws_access_key: "{{ s3_backup.access_key }}"
+      aws_secret_key: "{{ s3_backup.secret_key }}"
+    when: private_key.stat.exists == False
+
+  - name: Import public key to gpg
+    shell: "gpg --import /root/{{ backups.gpg_key_name }}.pub"
+    register: import_key
+    changed_when: "'imported' in import_key.stdout"
+
+  - name: Trust gpg key
+    shell: 'echo -e "trust\n5\ny\n" | gpg --command-fd 0 --edit-key {{ backups.gpg_key }}'
+    register: trust_key
+    changed_when: "'trust: unknown' in trust_key.stdout"
+
+  - name: Create .duplicity file
+    template:
+      src: duplicity.j2
+      dest: /root/.duplicity
+      mode: '0600'
+
+  - name: Create directory if needed
+    file:
+      path: "{{ item.location }}"
+      state: directory
+      mode: '0755'
+    loop: "{{ backups.locations }}"
+
+  - name: Restore from s3 if empty
+    loop: "{{ backups.locations }}"
+    include_tasks: restore.yml
+    when: "{{ item.restore_if_empty }}"
+
+  - name: Copy backup scripts
+    loop: "{{ backups.locations }}"
+    template:
+      src: backup.sh.j2
+      dest: "/usr/local/bin/duplicity_{{ item.name}}_backup.sh"
+      mode: '0755'
+
+  - name: Create log directories
+    loop: "{{ backups.locations }}"
+    file:
+      path: "/var/log/backups/{{ item.name }}"
+      state: directory
+
+  - name: Setup crons
+    loop: "{{ backups.locations }}"
+    lineinfile:
+      path: "/etc/crontab"
+      regexp: '{{ item.name }}_backup'
+      line: "{{ item.cron }} /usr/local/bin/duplicity_{{ item.name}}_backup.sh >> /var/log/backups/{{ item.name }} 2>&1"

@@ -95,7 +95,9 @@ data:
   #   - disabled
   #   - vxlan (default)
   #   - geneve
-  tunnel: disabled
+  tunnel: vxlan
+  enable-wireguard: "true"
+  enable-l7-proxy: "false"
 
   # Name of the cluster. Only relevant when building a mesh of clusters.
   cluster-name: default
@@ -104,10 +106,9 @@ data:
   wait-bpf-mount: "false"
 
   masquerade: "true"
-  enable-bpf-masquerade: "false"
+  enable-bpf-masquerade: "true"
   enable-xt-socket-fallback: "true"
   install-iptables-rules: "true"
-  auto-direct-node-routes: "true"
   kube-proxy-replacement:  "strict"
   enable-health-check-nodeport: "true"
   node-port-bind-protection: "true"
@@ -123,9 +124,15 @@ data:
   operator-api-serve-addr: "127.0.0.1:9234"
   ipam: "kubernetes"
   disable-cnp-status-updates: "true"
+{% if tailscale_nic is defined %}
+  devices: "{{ tailscale_nic }} {{ private_nic }}"
+  direct-routing-device: "{{ tailscale_nic }}"
+  auto-direct-node-routes: "true"
+{% else %}
+  auto-direct-node-routes: "false"
+{% endif %}
 {% if private_nic is defined %}
-  devices: "{{ private_nic }} {{ tailscale_nic }}"
-  direct-routing-device: "{{ private_nic }}"
+  devices: "{{ private_nic }}"
 {% endif %}
   k8s-api-server: "https://127.0.0.1:6443"
   native-routing-cidr: "{{ pod_network_cidr }}"
@@ -591,7 +598,7 @@ spec:
   # We support HA mode only for Kubernetes version > 1.14
   # See docs on ServerCapabilities.LeasesResourceLock in file pkg/k8s/version/version.go
   # for more details.
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       io.cilium/app: operator

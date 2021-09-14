@@ -37,7 +37,7 @@
   - "kubelet_status.stdout != ''"
 
 - name: Generate join node token
-  command: > 
+  command: >
     kubeadm token create
     --ttl 15m
   register: join_token
@@ -81,12 +81,12 @@
 # ugly way (https://github.com/ansible/ansible/issues/12170)
 # may need to refacto
 - name: Upgrade nodes
-  include_role: 
+  include_role:
     name: kube-upgrade-node
   with_items: "{{ groups['kube-node'] | map('extract', hostvars, 'inventory_hostname') }}"
   loop_control:
     loop_var: host_item
-  when: 
+  when:
     - "kubelet_version.stdout | default('v' + kubernetes_version) != 'v' + kubernetes_version"
     - "host_item == inventory_hostname"
     - "kubelet_status.stdout != ''"
@@ -118,6 +118,8 @@
     path: /var/lib/kubelet/kubeadm-flags.env
     line: 'KUBELET_EXTRA_ARGS="--cloud-provider=external"'
   register: kubelet_extra_args
+  when:
+  - register_cloud_provider
 
 - name: Restart kubelet
   systemd:
@@ -145,5 +147,5 @@
   shell: "kubectl label nodes {{ inventory_hostname }} node-role.kubernetes.io/node= --overwrite"
   when:
     - inventory_hostname not in groups['kube-master']
-    - inventory_hostname not in node_label.stdout 
+    - inventory_hostname not in node_label.stdout
   delegate_to: "{{ groups['kube-master'][0] }}"

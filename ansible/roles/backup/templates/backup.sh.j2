@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# backup script for {{ item.name }}
+
+BACKUP_BASE="{{ item.location }}"
+DIRNAME="{{ item.name }}"
+BUCKET="{{ s3_backup.bucket }}"
+VERBOSE="-v 1"
+S3_PARAMS="--s3-use-new-style" # [--s3-use-multiprocessing|--s3-use-rrs]
+
+# Check if we are root
+[[ "$(id -u)" != "0" ]] && { echo "This script must be run as root" 1>&2; exit 1; }
+
+# Load the duplicity GPG key from the root user keychain
+GPG_KEY="{{ backups.gpg_key }}"
+
+# Load the GPG key passphrase and trtest IAM user credentials
+[[ -s ~/.duplicity ]]  && . ~/.duplicity || { echo "File ~/.duplicity not found" 1>&2; exit 1; }
+
+# Upload to S3 and maintain the backup size
+/usr/bin/duplicity $S3_PARAMS --encrypt-key ${GPG_KEY} --asynchronous-upload ${VERBOSE} incr --full-if-older-than {{ item.full_if_older_than }} ${BACKUP_BASE} "s3://{{ s3_backup.url}}/${BUCKET}/${HOSTNAME}/${DIRNAME}"
+if [ ! $! ]
+then
+    /usr/bin/duplicity $S3_PARAMS ${VERBOSE} remove-all-but-n-full {{ item.full_to_keep }} --force "s3://{{ s3_backup.url}}/${BUCKET}/${HOSTNAME}/${DIRNAME}"
+    /usr/bin/duplicity $S3_PARAMS ${VERBOSE} remove-all-inc-of-but-n-full {{ item.remove_inc_older_n_full }} --force "s3://{{ s3_backup.url}}/${BUCKET}/${HOSTNAME}/${DIRNAME}"
+fi

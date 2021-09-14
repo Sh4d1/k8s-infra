@@ -5,27 +5,17 @@
     dest: /etc/kubernetes/kustomize/etcd+strategic.yaml
     force: yes
   when:
-  - item.1 not in groups['kube-master'][0] 
+  - item.1 not in groups['kube-master'][0]
   register: etcd
   delegate_to: "{{ item.1 }}"
 
-- name: Write static etcdpod manifests on secondary masters # need to changes `-k` to --experimental-patches on next minor
-  block:
-  - name: Handle old way
-    command: > 
-      kubeadm init phase etcd local
-      -k /etc/kubernetes/kustomize/
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-  rescue:
-  - name: Handle new way
-    command: > 
-      kubeadm init phase etcd local
-      --experimental-patches /etc/kubernetes/kustomize/
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
+- name: Write static etcdpod manifests on secondary masters
+  command: >
+    kubeadm init phase etcd local
+    --patches /etc/kubernetes/kustomize/
+    --config /etc/kubernetes/kubeadm-master.conf
+  tags:
+  - config
   when:
   - item.1 not in groups['kube-master'][0]
   - etcd.changed
@@ -36,7 +26,7 @@
     kubeadm join
     --config /etc/kubernetes/kubeadm-master.conf
     --ignore-preflight-errors=ExternalEtcdVersion,DirAvailable--etc-kubernetes-manifests,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Swap
-    --experimental-patches /etc/kubernetes/kustomize/
+    --patches /etc/kubernetes/kustomize/
   when:
   - item.1 not in groups['kube-master'][0] and hostvars[groups['kube-master'][0]]['kubelet_first_master_status']['stdout'] == ""
   delegate_to: "{{ item.1 }}"

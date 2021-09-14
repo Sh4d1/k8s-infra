@@ -150,7 +150,7 @@
   - "running_kubernetes_version.stderr == ''"
 
 - name: Update api server certificates on masters
-  command: > 
+  command: >
     kubeadm init phase certs apiserver
     --config /etc/kubernetes/kubeadm-master.conf
   tags:
@@ -162,62 +162,36 @@
 # ugly way (https://github.com/ansible/ansible/issues/12170)
 # may need to refacto
 - name: Upgrade masters
-  include_role: 
+  include_role:
     name: kube-upgrade-master
   with_items: "{{ groups['kube-master'] | map('extract', hostvars, 'inventory_hostname') }}"
   loop_control:
     loop_var: host_item
-  when: 
+  when:
     - "running_kubernetes_version.stderr == ''"
     - "running_kubernetes_version.stdout | default('v' + kubernetes_version) != 'v' + kubernetes_version"
     - "host_item == inventory_hostname"
 
-- name: Write static pod manifests on primary master # need to changes `-k` to --experimental-patches on next minor
-  block:
-  - name: Handle old way
-    command: > 
-      kubeadm init phase control-plane all
-      -k /etc/kubernetes/kustomize/ 
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname in groups['kube-master'][0]
-    - master_conf.changed
-  rescue:
-  - name: Handle new way
-    command: > 
-      kubeadm init phase control-plane all
-      --experimental-patches /etc/kubernetes/kustomize/ 
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname in groups['kube-master'][0]
-    - master_conf.changed
-
-- name: Write static etcd pod manifests on primary master # need to changes `-k` to --experimental-patches on next minor
-  block:
-  - name: Handle old way
-    command: > 
-      kubeadm init phase etcd local
-      -k /etc/kubernetes/kustomize/ 
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname in groups['kube-master'][0]
-  rescue:
-  - name: Handle new way
-    command: > 
-      kubeadm init phase etcd local
-      --experimental-patches /etc/kubernetes/kustomize/ 
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname in groups['kube-master'][0]
+- name: Write static pod manifests on primary master
+  command: >
+    kubeadm init phase control-plane all
+    --patches /etc/kubernetes/kustomize/
+    --config /etc/kubernetes/kubeadm-master.conf
+  tags:
+  - config
   when:
+  - inventory_hostname in groups['kube-master'][0]
+  - master_conf.changed
+
+- name: Write static etcd pod manifests on primary master
+  command: >
+    kubeadm init phase etcd local
+    --patches /etc/kubernetes/kustomize/
+    --config /etc/kubernetes/kubeadm-master.conf
+  tags:
+  - config
+  when:
+  - inventory_hostname in groups['kube-master'][0]
   - etcd.changed
 
 - name: Initialize cluster on primary master with kubeadm init --config /etc/kubernetes/kubeadm-master.conf --upload-certs
@@ -227,35 +201,22 @@
     --upload-certs
     --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml,Swap
     --skip-phases=addon/kube-proxy
-    --experimental-patches /etc/kubernetes/kustomize/
+    --patches /etc/kubernetes/kustomize/
   tags:
   - init
   when:
   - inventory_hostname in groups['kube-master'][0] and kubelet_first_master_status.stdout == ""
 
-- name: Write static pod manifests on secondary masters # need to changes `-k` to --experimental-patches on next minor
-  block:
-  - name: Handle old way
-    command: > 
-      kubeadm init phase control-plane all
-      -k /etc/kubernetes/kustomize/
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname not in groups['kube-master'][0]
-    - secondary_conf.changed
-  rescue:
-  - name: Handle new way
-    command: > 
-      kubeadm init phase control-plane all
-      --experimental-patches /etc/kubernetes/kustomize/
-      --config /etc/kubernetes/kubeadm-master.conf
-    tags:
-    - config
-    when:
-    - inventory_hostname not in groups['kube-master'][0]
-    - secondary_conf.changed
+- name: Write static pod manifests on secondary masters
+  command: >
+    kubeadm init phase control-plane all
+    --patches /etc/kubernetes/kustomize/
+    --config /etc/kubernetes/kubeadm-master.conf
+  tags:
+  - config
+  when:
+  - inventory_hostname not in groups['kube-master'][0]
+  - secondary_conf.changed
 
 - name: Join masters
   include_tasks: join_master.yml
@@ -286,6 +247,8 @@
     path: /var/lib/kubelet/kubeadm-flags.env
     line: 'KUBELET_EXTRA_ARGS="--cloud-provider=external"'
   register: kubelet_extra_args
+  when:
+  - register_cloud_provider
 
 - name: Restart kubelet
   systemd:

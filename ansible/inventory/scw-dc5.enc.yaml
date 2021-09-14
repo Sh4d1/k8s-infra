@@ -1,0 +1,75 @@
+scw-dc5:
+    vars:
+        ansible_user: root
+        ansible_become: true
+        #tailscale_nic: tailscale0
+        private_nic: enp1s0f0
+        #ansible_tailscale_nic: ansible_{{ tailscale_nic }}
+        ansible_private_nic: ansible_{{ tailscale_nic }}
+        resolv_nameservers:
+            - 1.1.1.1
+            # tailscale
+            - 100.100.100.100
+        resolv_search:
+            - patrik-cyvoct.gmail.com.beta.tailscale.net
+        s3_backup:
+            bucket: ENC[AES256_GCM,data:UJeEhK4L/G+7ALza,iv:mcrWoiED9aBpHo7Eae+3tMfwEZFOMSUcYl4A05RJ508=,tag:XsCkVDaEDKLZcnsHLs2SiQ==,type:str]
+            access_key: ENC[AES256_GCM,data:lmC/gJ5VpcuP+AMgaMocsUWon+M=,iv:E/Tm5hpnkp8FIP/wm7JU/Lt1nXkG2LOOnvuFggJoGtM=,tag:BLnxyU9Mx9lYOPnUa3+e4A==,type:str]
+            secret_key: ENC[AES256_GCM,data:/Q6iIhnxi9f4C4bj2C5b5mzTCXyK6qbMPcGqeTwwLg/inz7U,iv:Q0m58FSoJM62HGWSbIoKgyTBMy2r+yMxWojVKpGXvw8=,tag:WSbSCA4Y9JGDHlvTb9u8aA==,type:str]
+            url: ENC[AES256_GCM,data:EtQPvJPNgrOCGwP0ZYo4tGzF+Q==,iv:IWUrkQ/vM1iM3GNPKJM5y5FtxboWCogasf5IKQqyeeg=,tag:ZHZCYCuulfNZyiaP0c9r7A==,type:str]
+            region: fr-par
+            gpg_passphrase: ENC[AES256_GCM,data:0xXN2zFmTK38P4XAag+UWgHz0w0=,iv:8mgqfD5mkr82LosDNsqkJBYG1UyZFwHrJSms6tYErTg=,tag:O/njP3G//edBHs0sjf18pg==,type:str]
+        s3ql:
+            - name: movies
+              s3_bucket: ENC[AES256_GCM,data:X1w5AGLW,iv:7AlY05q7bsfNjy53fvFahe1CFdUT5qf9Fng9lnPyDKQ=,tag:yt+5+32RgCvfG9guIE2BRw==,type:str]
+              s3_url: ENC[AES256_GCM,data:3ejIpwKTNrSX1MI1wm0c6f4naQ==,iv:E/3mxvmKbWMRkAc3uMpvP4GY/EyJYx9cLUylB60KRzA=,tag:DedsBZeyUl7kCL4/0SV4wg==,type:str]
+              mountpoint: /data/media/movies
+              s3_access_key: ENC[AES256_GCM,data:tG8vR73+6g7Cbw0AoD8zpVGvKQo=,iv:wAs06tbXD9lLUIyL/Jqx+FED7MpZeh5y1VDUCSMWhO4=,tag:goxD7xGLUyQHFgdjLmreVg==,type:str]
+              s3_secret_key: ENC[AES256_GCM,data:pKSPBzzdw9CFeph2jLx6BL+X45+pZ7YdlC8BtIYwZeGknJCm,iv:xLw8dEZh+lNodfawzFX1tDmWSFnhRfxRKGH1Ru5wPCo=,tag:QPpGvtPe+B2qftnxCXfiIw==,type:str]
+            - name: tvshows
+              s3_bucket: ENC[AES256_GCM,data:SwhBx8jv,iv:Zo/xVCnBpfZDRi/RNzYAEkRIiZjEYDlXn8+Zj3UjOf8=,tag:up38zn5P/HMVoI3bD7jJ0g==,type:str]
+              s3_url: ENC[AES256_GCM,data:eTID4Dc2biIFkbE1I/odUJkfbQ==,iv:CHrhzFqpvMucpHiFLMSgGbGyU/mSs1/X5V68l2nHs9g=,tag:TRrV3o0CuNpaxHpKgejmwg==,type:str]
+              mountpoint: /data/media/tvshows
+              s3_access_key: ENC[AES256_GCM,data:HOvuZgeT+wKTZLDq4OI5zfSyN3M=,iv:+ElJzidlhYDAYJYS440QDASBINF4jtX5V66bzej+8lA=,tag:EMGpIh5Q3c8F0Gf0wtkDhg==,type:str]
+              s3_secret_key: ENC[AES256_GCM,data:SjuwdbZkSNzd94F/lD0m0HrsLOKN2cKp/WpwIna7mz/gMal2,iv:kxSFSzGd/xIM8m0DnStR2xETWotnGK5jyS+7HoVPiP0=,tag:ZwYHN4FSYl8O6p2N2NI4mg==,type:str]
+    children:
+        k8s-cluster:
+            children:
+                kube-master:
+                    children:
+                        dedicated:
+                            hosts:
+                                luffy:
+                                    ansible_host: ENC[AES256_GCM,data:NsWM/GxaHJaSvEr/3w==,iv:uUR+LtDDtSBTLo+EN3lxy7v4+ch6qTkWwFNE9LqiPpU=,tag:kHgfzLlybzOnuksbBmIFqA==,type:str]
+                kube-node: null
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age: []
+    lastmodified: "2021-09-18T22:30:13Z"
+    mac: ENC[AES256_GCM,data:QukCYBU8h1Uu1NNCO4BhIScIlwqf3OVnajYKK7xRfqQlUUUU0nZND3zOCY6Oxl+GFIqLYFSG8ekOpf5pToRSJXdF7AtJWEil3GCuKSq9VhFuLeW59h7Fj1MRDIKfdIK16E5K4VIii7oi0Ve4ddtxsZeNdQIiaecl8fGckK0IxWY=,iv:EpZzOca954C2Mq8JwETc0BCtI7yhmsOgDBVSGYoBego=,tag:T8fYJN9MjsmvralTGDbodw==,type:str]
+    pgp:
+        - created_at: "2021-09-18T22:30:12Z"
+          enc: |
+            -----BEGIN PGP MESSAGE-----
+
+            hQIMAwAAAAAAAAAAARAAmrwDqT8IM4ehMHo7LO8F0abAP+kw+x/pR6liSbSKSnCq
+            rLWaFtf+tedMlUPQtRn5t3N/OqoOSKdZSP5b6IIXbVJIDf0+b5s4tVAli4FITGYu
+            kQ9ZdHuXoQVM1m2qoViNPRmBQSi8ZYlhXn96CeDINZXbuGAGOR/dsG1/BYpqiAnb
+            gB97P7z2p3TZDlOWxLUkKuO7bUn7I8fJ8aX5qdnXyvNENj8MTnBlBrrUru6IXR9u
+            JsKF0L7pqGXUn9SUkGuCn8znYvWAzIvoXcw70C3V0V5YvA1KZFRtfl80uunpGimT
+            ufAxQzjEmYu6Z1mUckZbC2Ymo0n6+WUObJVwbHImtDhv9mddR/mKzPjNVcJ/l88n
+            QP/GlMpGpr/xmtHR7QvUm/L9yqozYNpSGNqqzvoYxUGJcqbN8yblgqeEWIcKRnR8
+            l6LYgNBhO8V2rZTuJo6S8SjXSjQ6nD+b4iraAfoytwrXlbibJIHRxDiehYXwHmql
+            kPy7qTNWUSU2EnccoLjCELVmcST70IdUBlEzVajN/+KLNoVMTnQYpMNEZOBeEOIW
+            yOfrFI9VNoiF5pTB31EbGkwCnq5HbgafNHabi0yt2nFvbyfyjygXVQuZUayNsA4m
+            DI3et6icEEeiJEiivo0aWac9iwxkB/DYzO/yQl6+Rj7XNTvWldBIo0U83pm/OJHS
+            XAHIsXtq1zRGphbdBa85T+ztGSKd192r9lSQ7PRMRM0KiUeOskaUJj0awtF0LIQq
+            cmHZdQg+CXvcIMS3/B+/IB/aImZ69dsHbwYvjLnyJYElz0u1nLNP1YfZiLdp
+            =5sYC
+            -----END PGP MESSAGE-----
+          fp: 2C3E86E982BBE36AD0FBB0270B323237B39B6B5B
+    encrypted_regex: ^(ansible_host|subnet|gateway|s3_access_key|s3_secret_key|s3_bucket|s3_url|gpg_passphrase|access_key|secret_key|bucket|url)$
+    version: 3.7.1

@@ -1,0 +1,86 @@
+cluster_name: "scw-dc5"
+
+master_sans:
+
+full_lb_name: "dummy"
+
+kubernetes_version: "1.22.1"
+
+service_network_cidr: "10.96.0.0/16"
+pod_network_cidr: "10.100.0.0/16"
+
+cni: "cilium"
+container_runtime: "containerd"
+
+cilium_version: "1.10.4"
+
+containerd_release_version: 1.5.5
+
+kube_state_metrics_version: "1.9.7"
+metrics_server_version: "0.0.0"
+
+haproxy_image_repo: "haproxy"
+haproxy_image_tag: "2.1.4-alpine"
+haproxy_config_dir: "/etc/kubernetes/haproxy"
+haproxy_request_cpu: "25m"
+haproxy_request_memory: "32M"
+haproxy_healthcheck_port: 8081
+
+register_cloud_provider: false
+
+create_dirs:
+- /data/torrent/watch
+- /data/torrent/downloads
+
+backups:
+  gpg_key_name: duplicity
+  gpg_key: A60BE56D2941AC98
+  locations:
+  - name: vaultwarden
+    location: /data/bitwarden
+    cron: "13 */2 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2
+  - name: nextcloud-data
+    location: /data/nextcloud/data
+    cron: "7 2 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2
+  - name: nextcloud-db
+    location: /data/nextcloud/db
+    cron: "3 2 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2
+  - name: webtrees-data
+    location: /data/webtrees/data
+    cron: "7 3 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2
+  - name: webtrees-db
+    location: /data/webtrees/db
+    cron: "3 3 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2
+  - name: seedbox-config
+    location: /data/seedbox
+    cron: "3 4 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 2
+    remove_inc_older_n_full: 2

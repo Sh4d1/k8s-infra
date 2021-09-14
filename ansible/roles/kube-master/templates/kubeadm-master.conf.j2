@@ -47,7 +47,9 @@ nodeRegistration:
     key: node-role.kubernetes.io/control-plane
   kubeletExtraArgs:
     node-ip: "{{ hostvars[inventory_hostname][ansible_private_nic]['ipv4']['address'] }}"
+{% if register_cloud_provider %}
     cloud-provider: "external"
+{% endif %}
 bootstrapTokens:
 - token: "{{ BOOTSTRAP_TOKEN }}"
   description: "kubeadm bootstrap token"

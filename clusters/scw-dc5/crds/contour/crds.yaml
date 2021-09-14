@@ -8,8 +8,8 @@ spec:
   interval: 30m
   url: https://github.com/projectcontour/contour.git
   ref:
-    # renovate: registryUrl=https://charts.rook.io/release chart=bitnami
-    tag: v1.18.1
+    # renovate: registryUrl=https://charts.bitnami.io/bitnami chart=contour
+    tag: v1.15.0
   ignore: |
     # exclude all
     /*

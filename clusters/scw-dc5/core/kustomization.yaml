@@ -7,3 +7,4 @@ resources:
 - contour
 - certificates
 - contour-auth
+- metrics-server

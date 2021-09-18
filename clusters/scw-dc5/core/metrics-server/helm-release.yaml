@@ -19,4 +19,4 @@ spec:
     apiService:
       create: true
     extraArgs:
-    - --kubelet-insecure-tls
+      kubelet-insecure-tls: "true"

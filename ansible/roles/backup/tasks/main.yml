@@ -92,4 +92,4 @@
     lineinfile:
       path: "/etc/crontab"
       regexp: '{{ item.name }}_backup'
-      line: "{{ item.cron }} /usr/local/bin/duplicity_{{ item.name}}_backup.sh >> /var/log/backups/{{ item.name }} 2>&1"
+      line: "{{ item.cron }} root /usr/local/bin/duplicity_{{ item.name}}_backup.sh >> /var/log/backups/{{ item.name }} 2>&1"

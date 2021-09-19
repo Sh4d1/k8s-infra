@@ -17,7 +17,7 @@ jobs:
     - name: Renovate Helm Releases
       uses: k8s-at-home/renovate-helm-releases@v1
       with:
-        cluster-path: "./clusters/hzn-fsn1"
+        cluster-path: "./clusters/scw-dc5"
     - name: Create pull request for renovatebot helm-release annotations
       uses: peter-evans/create-pull-request@v3
       with:

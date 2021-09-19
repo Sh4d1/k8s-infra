@@ -26,7 +26,7 @@ jobs:
         flux install --version="${VERSION}" \
           --components-extra=image-reflector-controller,image-automation-controller \
           --network-policy=false \
-          --export > ./clusters/hzn-fsn1/base/flux-system/gotk-components.yaml
+          --export > ./clusters/scw-dc5/base/flux-system/gotk-components.yaml
         echo "::set-output name=flux_version::$VERSION"
     - name: Create pull request for Flux upgrade
       uses: peter-evans/create-pull-request@v3

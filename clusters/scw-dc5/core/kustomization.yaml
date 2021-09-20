@@ -8,3 +8,4 @@ resources:
 - certificates
 - contour-auth
 - metrics-server
+- monitoring

@@ -5,3 +5,4 @@ resources:
 - bitnami-charts.yaml
 - jetstack-charts.yaml
 - nextcloud-charts.yaml
+- prometheus-community.yaml

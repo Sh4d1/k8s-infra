@@ -9,12 +9,11 @@ resources:
 - contour-auth.yaml
 - flux-system.yaml
 - kube-system.yaml
+- monitoring.yaml
 # apps
 - bitwarden.yaml
 - blog.yaml
-- ferdi.yaml
 - nextcloud.yaml
 - resume.yaml
 - seedbox.yaml
 - webtrees.yaml
-- znc.yaml

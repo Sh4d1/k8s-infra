@@ -77,6 +77,28 @@ spec:
       subPath: tvshows
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: plex-all
+  labels:
+    juicefs-name: all
+spec:
+  capacity:
+    storage: 2Ti
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: juicefs-sc
+  csi:
+    driver: csi.juicefs.com
+    volumeHandle: media
+    fsType: juicefs
+    nodePublishSecretRef:
+      name: juicefs-sc-secret
+      namespace: kube-system
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: plex-config
@@ -120,3 +142,19 @@ spec:
   selector:
     matchLabels:
       juicefs-name: tvshows
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-all
+  namespace: seedbox
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Ti
+  storageClassName: juicefs-sc
+  selector:
+    matchLabels:
+      juicefs-name: all

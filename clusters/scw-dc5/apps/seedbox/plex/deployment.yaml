@@ -44,21 +44,17 @@ spec:
         volumeMounts:
         - mountPath: "/config"
           name: plex-config
-        - mountPath: "/data/movies"
-          name: plex-movies
-        - mountPath: "/data/tvshows"
-          name: plex-tvshows
+        # TODO: weird issue with having 2 juicefs pvc here
+        - mountPath: "/data"
+          name: plex-all
         - mountPath: "/transcode"
           name: plex-transcode
       volumes:
       - name: plex-config
         persistentVolumeClaim:
           claimName: plex-config
-      - name: plex-movies
+      - name: plex-all
         persistentVolumeClaim:
-          claimName: plex-movies
-      - name: plex-tvshows
-        persistentVolumeClaim:
-          claimName: plex-tvshows
+          claimName: plex-all
       - name: plex-transcode
         emptyDir: {}

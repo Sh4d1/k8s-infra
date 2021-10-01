@@ -6,20 +6,6 @@ metadata:
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ---
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: plex-movies
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: plex-tvshows
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -46,45 +32,49 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: plex-movies
+  labels:
+    juicefs-name: movies
 spec:
   capacity:
-    storage: 512Gi
+    storage: 2Ti
+  volumeMode: Filesystem
   accessModes:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: plex-movies
-  local:
-    path: /data/media/movies
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - ${NODE_NAME_01}
+  storageClassName: juicefs-sc
+  csi:
+    driver: csi.juicefs.com
+    volumeHandle: media
+    fsType: juicefs
+    nodePublishSecretRef:
+      name: juicefs-sc-secret
+      namespace: kube-system
+    volumeAttributes:
+      subPath: movies
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: plex-tvshows
+  labels:
+    juicefs-name: tvshows
 spec:
   capacity:
-    storage: 512Gi
+    storage: 2Ti
+  volumeMode: Filesystem
   accessModes:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: plex-tvshows
-  local:
-    path: /data/media/tvshows
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - ${NODE_NAME_01}
+  storageClassName: juicefs-sc
+  csi:
+    driver: csi.juicefs.com
+    volumeHandle: media
+    fsType: juicefs
+    nodePublishSecretRef:
+      name: juicefs-sc-secret
+      namespace: kube-system
+    volumeAttributes:
+      subPath: tvshows
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -109,8 +99,11 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: 512Gi
-  storageClassName: plex-movies
+      storage: 2Ti
+  storageClassName: juicefs-sc
+  selector:
+    matchLabels:
+      juicefs-name: movies
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -122,5 +115,8 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: 512Gi
-  storageClassName: plex-tvshows
+      storage: 2Ti
+  storageClassName: juicefs-sc
+  selector:
+    matchLabels:
+      juicefs-name: tvshows

@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
 - bitnami-charts.yaml
 - jetstack-charts.yaml
+- juicefs-csi-driver.yaml
 - nextcloud-charts.yaml
 - prometheus-community.yaml

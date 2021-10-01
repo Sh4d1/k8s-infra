@@ -7,5 +7,6 @@ resources:
 - contour
 - certificates
 - contour-auth
+- juicefs
 - metrics-server
 - monitoring

@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: juicefs-csi-driver
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://juicedata.github.io/juicefs-csi-driver
+  timeout: 3m

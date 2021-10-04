@@ -19,19 +19,6 @@ scw-dc5:
             url: ENC[AES256_GCM,data:EtQPvJPNgrOCGwP0ZYo4tGzF+Q==,iv:IWUrkQ/vM1iM3GNPKJM5y5FtxboWCogasf5IKQqyeeg=,tag:ZHZCYCuulfNZyiaP0c9r7A==,type:str]
             region: fr-par
             gpg_passphrase: ENC[AES256_GCM,data:0xXN2zFmTK38P4XAag+UWgHz0w0=,iv:8mgqfD5mkr82LosDNsqkJBYG1UyZFwHrJSms6tYErTg=,tag:O/njP3G//edBHs0sjf18pg==,type:str]
-        s3ql:
-            - name: movies
-              s3_bucket: ENC[AES256_GCM,data:X1w5AGLW,iv:7AlY05q7bsfNjy53fvFahe1CFdUT5qf9Fng9lnPyDKQ=,tag:yt+5+32RgCvfG9guIE2BRw==,type:str]
-              s3_url: ENC[AES256_GCM,data:3ejIpwKTNrSX1MI1wm0c6f4naQ==,iv:E/3mxvmKbWMRkAc3uMpvP4GY/EyJYx9cLUylB60KRzA=,tag:DedsBZeyUl7kCL4/0SV4wg==,type:str]
-              mountpoint: /data/media/movies
-              s3_access_key: ENC[AES256_GCM,data:tG8vR73+6g7Cbw0AoD8zpVGvKQo=,iv:wAs06tbXD9lLUIyL/Jqx+FED7MpZeh5y1VDUCSMWhO4=,tag:goxD7xGLUyQHFgdjLmreVg==,type:str]
-              s3_secret_key: ENC[AES256_GCM,data:pKSPBzzdw9CFeph2jLx6BL+X45+pZ7YdlC8BtIYwZeGknJCm,iv:xLw8dEZh+lNodfawzFX1tDmWSFnhRfxRKGH1Ru5wPCo=,tag:QPpGvtPe+B2qftnxCXfiIw==,type:str]
-            - name: tvshows
-              s3_bucket: ENC[AES256_GCM,data:SwhBx8jv,iv:Zo/xVCnBpfZDRi/RNzYAEkRIiZjEYDlXn8+Zj3UjOf8=,tag:up38zn5P/HMVoI3bD7jJ0g==,type:str]
-              s3_url: ENC[AES256_GCM,data:eTID4Dc2biIFkbE1I/odUJkfbQ==,iv:CHrhzFqpvMucpHiFLMSgGbGyU/mSs1/X5V68l2nHs9g=,tag:TRrV3o0CuNpaxHpKgejmwg==,type:str]
-              mountpoint: /data/media/tvshows
-              s3_access_key: ENC[AES256_GCM,data:HOvuZgeT+wKTZLDq4OI5zfSyN3M=,iv:+ElJzidlhYDAYJYS440QDASBINF4jtX5V66bzej+8lA=,tag:EMGpIh5Q3c8F0Gf0wtkDhg==,type:str]
-              s3_secret_key: ENC[AES256_GCM,data:SjuwdbZkSNzd94F/lD0m0HrsLOKN2cKp/WpwIna7mz/gMal2,iv:kxSFSzGd/xIM8m0DnStR2xETWotnGK5jyS+7HoVPiP0=,tag:ZwYHN4FSYl8O6p2N2NI4mg==,type:str]
     children:
         k8s-cluster:
             children:
@@ -48,8 +35,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2021-09-18T22:30:13Z"
-    mac: ENC[AES256_GCM,data:QukCYBU8h1Uu1NNCO4BhIScIlwqf3OVnajYKK7xRfqQlUUUU0nZND3zOCY6Oxl+GFIqLYFSG8ekOpf5pToRSJXdF7AtJWEil3GCuKSq9VhFuLeW59h7Fj1MRDIKfdIK16E5K4VIii7oi0Ve4ddtxsZeNdQIiaecl8fGckK0IxWY=,iv:EpZzOca954C2Mq8JwETc0BCtI7yhmsOgDBVSGYoBego=,tag:T8fYJN9MjsmvralTGDbodw==,type:str]
+    lastmodified: "2021-10-04T08:53:43Z"
+    mac: ENC[AES256_GCM,data:yTYefpKjWNQ5FBQseGKpVrzy7vgq2DUK9Z/bcG5VDiPwqDPTljoZWDY1sau+lIwGoydFK9Zutd1ZdqVaSsNXd+MI2QJTvhDRSvjpjAplIYFN32e5pi7qj1ymsCLsKHVlI8blivOzihhZanI5dmHLx2aSjtAX+QQT8H9/f1Hy450=,iv:h9HE3w725VEAUGW1EAa2QnO00AqDD0r3a+8MXMOo01M=,tag:J7ysN49D8p+idd3L+jzudg==,type:str]
     pgp:
         - created_at: "2021-09-18T22:30:12Z"
           enc: |

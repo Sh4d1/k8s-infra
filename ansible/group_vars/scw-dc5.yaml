@@ -84,3 +84,11 @@ backups:
     full_if_older_than: "14D"
     full_to_keep: 2
     remove_inc_older_n_full: 2
+  - name: juicefs-redis
+    location: /data/redis
+    cron: "17 */2 * * *"
+    restore_if_empty: true
+    restore_prefix: "luffy/"
+    full_if_older_than: "14D"
+    full_to_keep: 4
+    remove_inc_older_n_full: 2

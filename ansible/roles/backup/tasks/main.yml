@@ -81,10 +81,10 @@
       dest: "/usr/local/bin/duplicity_{{ item.name}}_backup.sh"
       mode: '0755'
 
-  - name: Create log directories
+  - name: Create log directory
     loop: "{{ backups.locations }}"
     file:
-      path: "/var/log/backups/{{ item.name }}"
+      path: "/var/log/backups"
       state: directory
 
   - name: Setup crons

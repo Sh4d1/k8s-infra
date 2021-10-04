@@ -86,8 +86,7 @@
       "versioning": "loose",
       "matchPackageNames": [
         "docker.io/plexinc/pms-docker",
-        "ghcr.io/nathanvaughn/webtrees",
-        "docker.io/vaultwarden/server"
+        "ghcr.io/nathanvaughn/webtrees"
       ],
     },
     // enable auto-merge

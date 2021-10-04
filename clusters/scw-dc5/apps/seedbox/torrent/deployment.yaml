@@ -22,7 +22,7 @@ spec:
         app: torrent
     spec:
       containers:
-      - image: docker.io/linuxserver/transmission
+      - image: docker.io/linuxserver/transmission:3.00-r2-ls102
         name: torrent
         ports:
         - containerPort: 9091

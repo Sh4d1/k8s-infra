@@ -85,7 +85,9 @@
       "matchDatasources": ["docker"],
       "versioning": "loose",
       "matchPackageNames": [
-        "docker.io/plexinc/pms-docker"
+        "docker.io/plexinc/pms-docker",
+        "ghcr.io/nathanvaughn/webtrees",
+        "docker.io/vaultwarden/server"
       ],
     },
     // enable auto-merge
@@ -100,6 +102,7 @@
         "docker.io/linuxserver/sonarr",
         "docker.io/linuxserver/radarr",
         "docker.io/linuxserver/transmission",
+        "ghcr.io/linuxserver/ombi"
      ],
     },
     {

@@ -8,7 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
-      # renovate: registryUrl=https://juicedata.github.io/juicefs-csi-driver/
+      # renovate: registryUrl=https://juicedata.github.io/juicefs-csi-driver
       chart: juicefs-csi-driver
       version: 0.6.0
       sourceRef:

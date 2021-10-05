@@ -22,7 +22,7 @@ spec:
         app: sonarr
     spec:
       containers:
-      - image: docker.io/linuxserver/sonarr:0.6.1354
+      - image: docker.io/linuxserver/sonarr:0.6.1355
         name: sonarr
         ports:
         - containerPort: 8989

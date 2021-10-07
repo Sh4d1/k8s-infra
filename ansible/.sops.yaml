@@ -1,4 +1,4 @@
 ---
 creation_rules:
-- encrypted_regex: '^(ansible_host|subnet|gateway|s3_access_key|s3_secret_key|s3_bucket|s3_url|gpg_passphrase|access_key|secret_key|bucket|url)$'
+- encrypted_regex: '^(ansible_host|subnet|gateway|s3_access_key|s3_secret_key|s3_bucket|s3_url|gpg_passphrase|access_key|secret_key|bucket|url|resolv_nameservers|resolv_search)$'
   pgp: 2C3E86E982BBE36AD0FBB0270B323237B39B6B5B

@@ -7,11 +7,10 @@ scw-dc5:
         #ansible_tailscale_nic: ansible_{{ tailscale_nic }}
         ansible_private_nic: ansible_{{ tailscale_nic }}
         resolv_nameservers:
-            - 1.1.1.1
-            # tailscale
-            - 100.100.100.100
+            - ENC[AES256_GCM,data:qCnPjdBtaxAunZ1z,iv:V3lEvJorOH7Np1rd4I1Jr9UsPBFI1GRW8tFlP0+PDSY=,tag:ARBpwK/LeNtNs649sCDhJg==,type:str]
+            - ENC[AES256_GCM,data:ex5GUjBnmVHba3Imr+/T,iv:PEJuDRNKj0BFdsUfktv2xdqUtsVByuicFkNgTcwYuu0=,tag:mMzS1WuQJPQpO5Vct8vKaw==,type:str]
         resolv_search:
-            - patrik-cyvoct.gmail.com.beta.tailscale.net
+            - ENC[AES256_GCM,data:lpCWpi65Z0hEhSXvoPwVI0fszXoGK/sPLsquu8FN5yIP4/02XTo98xRw,iv:E6W29i3+ggfoS8u3/q53bYuD9Rtq4+mUMRQsWhQH3Pw=,tag:nqt1E9Y2BQoTfLnZ5GlXgA==,type:str]
         s3_backup:
             bucket: ENC[AES256_GCM,data:UJeEhK4L/G+7ALza,iv:mcrWoiED9aBpHo7Eae+3tMfwEZFOMSUcYl4A05RJ508=,tag:XsCkVDaEDKLZcnsHLs2SiQ==,type:str]
             access_key: ENC[AES256_GCM,data:lmC/gJ5VpcuP+AMgaMocsUWon+M=,iv:E/Tm5hpnkp8FIP/wm7JU/Lt1nXkG2LOOnvuFggJoGtM=,tag:BLnxyU9Mx9lYOPnUa3+e4A==,type:str]
@@ -35,8 +34,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2021-10-04T08:53:43Z"
-    mac: ENC[AES256_GCM,data:yTYefpKjWNQ5FBQseGKpVrzy7vgq2DUK9Z/bcG5VDiPwqDPTljoZWDY1sau+lIwGoydFK9Zutd1ZdqVaSsNXd+MI2QJTvhDRSvjpjAplIYFN32e5pi7qj1ymsCLsKHVlI8blivOzihhZanI5dmHLx2aSjtAX+QQT8H9/f1Hy450=,iv:h9HE3w725VEAUGW1EAa2QnO00AqDD0r3a+8MXMOo01M=,tag:J7ysN49D8p+idd3L+jzudg==,type:str]
+    lastmodified: "2021-10-07T15:17:06Z"
+    mac: ENC[AES256_GCM,data:ZFG0Nf+EHy0m3X+Mz2ujS60zXETWTbdICJUbd+VGoFUr0VImvMWXpjaUWYLIIBmQh684gdnIdzKKy++dWzU7EfvNSaMkkTXtEm+M2cXSW84gmxNxoHZrUyQiAbHMQXvmXo968SpNkNK5fqjB9BcCyBKHSNa2puHYumxVethQZ7U=,iv:zv546xqm6W72cEpJI2pUkMp4CEM2oCZ+c6BJ4vLg0mo=,tag:EO84fZUykMYPplwUnb+OGA==,type:str]
     pgp:
         - created_at: "2021-09-18T22:30:12Z"
           enc: |
@@ -58,5 +57,5 @@ sops:
             =5sYC
             -----END PGP MESSAGE-----
           fp: 2C3E86E982BBE36AD0FBB0270B323237B39B6B5B
-    encrypted_regex: ^(ansible_host|subnet|gateway|s3_access_key|s3_secret_key|s3_bucket|s3_url|gpg_passphrase|access_key|secret_key|bucket|url)$
+    encrypted_regex: ^(ansible_host|subnet|gateway|s3_access_key|s3_secret_key|s3_bucket|s3_url|gpg_passphrase|access_key|secret_key|bucket|url|resolv_nameservers|resolv_search)$
     version: 3.7.1

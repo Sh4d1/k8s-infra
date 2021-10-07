@@ -2,8 +2,6 @@
 {% for ns in resolv_nameservers %}
 nameserver {{ ns }}
 {% endfor %}
-{% else %}
-nameserver 1.1.1.1
 {% endif %}
 {% if resolv_search is defined %}
 search {{ resolv_search | join(" ") }}

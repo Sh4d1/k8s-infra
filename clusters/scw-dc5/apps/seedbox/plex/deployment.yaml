@@ -22,7 +22,7 @@ spec:
         app: plex
     spec:
       containers:
-      - image: docker.io/plexinc/pms-docker:1.24.3.5033-757abe6b4
+      - image: docker.io/plexinc/pms-docker:1.24.4.5081-e362dc1ee
         name: plex
         ports:
         - containerPort: 32400

@@ -7,6 +7,7 @@ metadata:
   annotations:
     cloudflare.com/expose: "true"
 spec:
+  ingressClassName: "contour"
   virtualhost:
     fqdn: "cloud.${SECRET_DOMAIN}"
     tls:
@@ -24,6 +25,7 @@ metadata:
   annotations:
     cloudflare.com/expose: "true"
 spec:
+  ingressClassName: "contour"
   virtualhost:
     fqdn: "cloud.${SECRET_DOMAIN_ALT}"
     tls:

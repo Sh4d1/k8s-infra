@@ -20,6 +20,7 @@ metadata:
   annotations:
     cloudflare.com/expose: "true"
 spec:
+  ingressClassName: "contour"
   virtualhost:
     fqdn: "torrent.${SECRET_DOMAIN}"
     tls:

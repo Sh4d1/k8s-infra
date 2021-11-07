@@ -22,7 +22,7 @@ spec:
         app: ombi
     spec:
       containers:
-      - image: ghcr.io/linuxserver/ombi:4.3.3
+      - image: ghcr.io/linuxserver/ombi:4.4.0
         name: ombi
         ports:
         - containerPort: 3579

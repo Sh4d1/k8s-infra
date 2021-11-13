@@ -7,6 +7,7 @@ resources:
 - certificates.yaml
 - contour.yaml
 - contour-auth.yaml
+- contour-internal.yaml
 - flux-system.yaml
 - kube-system.yaml
 - monitoring.yaml

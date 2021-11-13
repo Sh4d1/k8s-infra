@@ -5,6 +5,7 @@ resources:
 - namespaces
 - cert-manager
 - contour
+- contour-internal
 - certificates
 - contour-auth
 - juicefs

@@ -20,15 +20,11 @@ metadata:
   annotations:
     cloudflare.com/expose: "true"
 spec:
-  ingressClassName: "contour"
+  ingressClassName: "contour-internal"
   virtualhost:
     fqdn: "torrent.${SECRET_DOMAIN}"
     tls:
       secretName: certificates/wildcard
-    authorization:
-      extensionRef:
-        name: htpasswd
-        namespace: contour-auth
   routes:
   - services:
     - name: torrent

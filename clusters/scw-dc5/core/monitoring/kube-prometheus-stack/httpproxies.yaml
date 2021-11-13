@@ -1,0 +1,36 @@
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  ingressClassName: "contour-internal"
+  virtualhost:
+    fqdn: "grafana.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: kube-prometheus-stack-grafana
+      port: 80
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: prometheus
+  namespace: monitoring
+  annotations:
+    cloudflare.com/expose: "true"
+spec:
+  ingressClassName: "contour-internal"
+  virtualhost:
+    fqdn: "prometheus.${SECRET_DOMAIN}"
+    tls:
+      secretName: certificates/wildcard
+  routes:
+  - services:
+    - name: kube-prometheus-stack-prometheus
+      port: 9090

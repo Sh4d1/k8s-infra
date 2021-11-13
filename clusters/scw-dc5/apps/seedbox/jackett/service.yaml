@@ -20,7 +20,7 @@ metadata:
   annotations:
     cloudflare.com/expose: "true"
 spec:
-  ingressClassName: "contour"
+  ingressClassName: "contour-internal"
   virtualhost:
     fqdn: "index.${SECRET_DOMAIN}"
     tls:

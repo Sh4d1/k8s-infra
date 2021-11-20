@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flaresolverr
+  namespace: seedbox
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8191
+  selector:
+    app: flaresolverr

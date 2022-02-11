@@ -18,6 +18,9 @@ spec:
   values:
     global:
       storageClass: nextcloud-db
+      postgresql:
+        auth:
+          existingSecret: db-secret
     replication:
       enabled: false
     existingSecret: db-secret

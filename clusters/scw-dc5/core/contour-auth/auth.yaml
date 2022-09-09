@@ -75,7 +75,7 @@ spec:
         - --tls-key-path=/tls/tls.key
         command:
         - /contour-authserver
-        image: docker.io/projectcontour/contour-authserver:v2
+        image: docker.io/projectcontour/contour-authserver:v3
         imagePullPolicy: IfNotPresent
         name: htpasswd
         ports:

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: bitwarden
-        image: docker.io/vaultwarden/server:1.26.0
+        image: docker.io/vaultwarden/server:1.30.5
         ports:
         - name: http
           containerPort: 80

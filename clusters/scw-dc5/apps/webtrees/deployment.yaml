@@ -22,7 +22,7 @@ spec:
         app: webtrees
     spec:
       containers:
-      - image: ghcr.io/nathanvaughn/webtrees:2.0.19
+      - image: ghcr.io/nathanvaughn/webtrees:2.1.19
         name: webtrees
         ports:
         - containerPort: 80
